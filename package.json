@@ -1,0 +1,9 @@
+{
+  "name": "resolver-js",
+  "version": "0.0.0",
+  "description": "Dependency injection container for TypeScript and JavaScript",
+  "main": "index.js",
+  "repository": "https://github.com/alonrbar/resolver-js.git",
+  "author": "Alon Bar <alon.r.bar@gmail.com>",
+  "license": "MIT"
+}

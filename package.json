@@ -1,6 +1,6 @@
 {
   "name": "resolver-js",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Dependency injection container for TypeScript and JavaScript",
   "keywords": [
     "DI",
@@ -39,7 +39,7 @@
     "@types/node": "8.5.2",
     "chai": "4.1.2",
     "mocha": "5.1.1",
-    "mocha-webpack": "1.1.0",
+    "mocha-webpack": "2.0.0-beta.0",
     "source-map-support": "0.5.5",
     "ts-loader": "4.3.0",
     "ts-nameof": "1.0.0",

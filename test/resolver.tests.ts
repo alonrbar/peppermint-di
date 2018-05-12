@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Resolver } from 'src';
+import { Resolver, injectable } from 'src';
 
 describe(nameof(Resolver), () => {
 
@@ -10,9 +10,31 @@ describe(nameof(Resolver), () => {
             expect(resolver).to.exist;
         });
 
+    });
 
-        it('calculates 1 + 1', () => {
-            expect(1 + 1).to.eql(2);
+    describe(nameof(Resolver.prototype.get), () => {
+
+        it('resolves constructor with registered dependency', () => {
+
+            class Dependency {
+
+            }
+
+            @injectable
+            class MyClass {
+
+                public dep: Dependency;
+
+                constructor(dep: Dependency ) {
+                    this.dep = dep;
+                }
+            }
+
+            const resolver = new Resolver();
+            resolver.register(Dependency);
+
+            const myClass = resolver.get(MyClass);
+            expect(myClass.dep).to.be.instanceOf(Dependency);;
         });
 
     });

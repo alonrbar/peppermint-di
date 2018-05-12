@@ -50,13 +50,13 @@ export class Resolver implements IContainer {
         const keyStr = this.getKeyString(key);
 
         if ((factory === null || factory === undefined) && typeof key === 'function') {
-            this.logger(`Registering '${keyStr}' (factory callback)'`);
+            this.logger(`Registering '${keyStr}' (constructor)`);
             this.factories.set(key, () => {
                 return this.resolveCTor(key, null, null);
             });
 
         } else if (factory) {
-            this.logger(`Registering '${keyStr}'.`);
+            this.logger(`Registering '${keyStr}' (factory callback)`);
             this.factories.set(key, factory);
 
         } else {
@@ -76,7 +76,7 @@ export class Resolver implements IContainer {
         const keyStr = this.getKeyString(key);
 
         if ((value === null || value === undefined) && typeof key === 'function') {
-            this.logger(`Registering '${keyStr}' as singleton (factory callback)`);
+            this.logger(`Registering '${keyStr}' as singleton (constructor)`);
             this.potentialSingletons.set(key, () => {
                 return this.resolveCTor(key, null, null);
             });

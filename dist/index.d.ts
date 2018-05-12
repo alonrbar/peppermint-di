@@ -1,6 +1,6 @@
 
 //
-// resolver
+// container
 //
 
 /**
@@ -10,7 +10,7 @@
  * https://stackoverflow.com/questions/20058391/javascript-dependency-injection
  * http://www.yusufaytas.com/dependency-injection-in-javascript/
  */
-export class Resolver implements IContainer {
+export class Container implements IContainer {
 
     /**
      * @param logger Optional logger method. E.g. console.log.

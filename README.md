@@ -30,11 +30,11 @@ class SomeClass {
 }
 
 
-const resolver = new Resolver();
+const container = new Container();
 
-resolver.registerSingle(SomeService)
+container.registerSingle(SomeService)
 
-const myClass = resolver.get(SomeClass);
+const myClass = container.get(SomeClass);
 ```
 
 ## Short Example - JavaScript
@@ -51,37 +51,37 @@ class SomeClass {
 }
 
 
-const resolver = new Resolver();
+const container = new Container();
 
-resolver.registerSingle('someService', SomeService);
+container.registerSingle('someService', SomeService);
 
-const myClass = resolver.get(SomeClass);
+const myClass = container.get(SomeClass);
 ```
 
 ## API
 
-Currently the readme includes only a brief overview of the Resolver API. For a more comprehensive review see the [typing file](https://github.com/alonrbar/resolver-js/blob/master/dist/index.d.ts).
+Currently the readme includes only a brief overview of the Container API. For a more comprehensive review see the [typing file](https://github.com/alonrbar/resolver-js/blob/master/dist/index.d.ts).
 
 Register a transient dependency.
 
 ```javascript
-Resolver.register<T>(key: ContainerKey<T>, factory?: Factory<T>): void;
+Container.register<T>(key: ContainerKey<T>, factory?: Factory<T>): void;
 ```
 
 Register a singleton dependency.
 
 ```javascript
-Resolver.registerSingle<T>(key: ContainerKey<T>, value?: T | Factory<T>): void;
+Container.registerSingle<T>(key: ContainerKey<T>, value?: T | Factory<T>): void;
 ```
 
 Resolve registered dependencies.
 
 ```javascript
-Resolver.get<T>(key: ContainerKey<T> | string, params?: any, options?: ResolveOptions): T;
+Container.get<T>(key: ContainerKey<T> | string, params?: any, options?: ResolveOptions): T;
 ```
 
 Resolve function arguments and call it.
 
 ```javascript
-Resolver.call(foo: Function, thisArg?: any, params?: any, options?: ResolveOptions): any;
+Container.call(foo: Function, thisArg?: any, params?: any, options?: ResolveOptions): any;
 ```

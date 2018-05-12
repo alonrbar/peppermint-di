@@ -1,18 +1,18 @@
 import { expect } from 'chai';
-import { Resolver, injectable } from 'src';
+import { Container, injectable } from 'src';
 
-describe(nameof(Resolver), () => {
+describe(nameof(Container), () => {
 
     describe('constructor', () => {
 
         it('works without arguments', () => {
-            const resolver = new Resolver();
+            const resolver = new Container();
             expect(resolver).to.exist;
         });
 
     });
 
-    describe(nameof(Resolver.prototype.get), () => {
+    describe(nameof(Container.prototype.get), () => {
 
         it('resolves constructor with registered dependency', () => {
 
@@ -30,7 +30,7 @@ describe(nameof(Resolver), () => {
                 }
             }
 
-            const resolver = new Resolver();
+            const resolver = new Container();
             resolver.register(Dependency);
 
             const myClass = resolver.get(MyClass);

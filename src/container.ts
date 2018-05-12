@@ -16,17 +16,17 @@ function emptyLogger(msg: string) {
  * https://stackoverflow.com/questions/20058391/javascript-dependency-injection
  * http://www.yusufaytas.com/dependency-injection-in-javascript/
  */
-export class Resolver implements IContainer {
+export class Container implements IContainer {
 
     private static get canReflect(): boolean {
-        if (Resolver._canReflect === undefined) {
+        if (Container._canReflect === undefined) {
             try {
-                Resolver._canReflect = (Reflect && Reflect.construct) ? true : false;
+                Container._canReflect = (Reflect && Reflect.construct) ? true : false;
             } catch (e) {
-                Resolver._canReflect = false;
+                Container._canReflect = false;
             }
         }
-        return Resolver._canReflect;
+        return Container._canReflect;
     }
     private static _canReflect: boolean;    
 
@@ -226,7 +226,7 @@ export class Resolver implements IContainer {
     private resolveCTor<T>(ctor: Constructor<T>, params: any, options: ResolveOptions): T {
         const dependencies = this.resolveDependencies(ctor, params, options);
 
-        if (Resolver.canReflect) {
+        if (Container.canReflect) {
             return Reflect.construct(ctor, dependencies);
 
         } else {
@@ -336,7 +336,7 @@ export class Resolver implements IContainer {
 
     private getArgumentTypes(func: Function): Function[] {
 
-        if (Resolver.canReflect) {
+        if (Container.canReflect) {
 
             // https://www.typescriptlang.org/docs/handbook/decorators.html#metadata
             return Reflect.getMetadata('design:paramtypes', func);

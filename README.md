@@ -80,7 +80,7 @@ Resolve registered dependencies.
 Resolver.get<T>(key: ContainerKey<T> | string, params?: any, options?: ResolveOptions): T;
 ```
 
-Resolve a function arguments and call it.
+Resolve function arguments and call it.
 
 ```javascript
 Resolver.call(foo: Function, thisArg?: any, params?: any, options?: ResolveOptions): any;

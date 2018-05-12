@@ -109,7 +109,7 @@ export class Resolver implements IContainer {
     }
 
     /**
-     * Resolve a function arguments and call it.
+     * Resolve function arguments and call it.
      * 
      * @param {object} [params] The supplied parameters will be used directly instead of being resolved
      */

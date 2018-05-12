@@ -2,8 +2,53 @@
   "name": "resolver-js",
   "version": "0.0.0",
   "description": "Dependency injection container for TypeScript and JavaScript",
-  "main": "index.js",
-  "repository": "https://github.com/alonrbar/resolver-js.git",
-  "author": "Alon Bar <alon.r.bar@gmail.com>",
-  "license": "MIT"
+  "keywords": [
+    "DI",
+    "injector"
+  ],
+  "author": "Alon Bar",
+  "license": "MIT",
+  "homepage": "https://github.com/alonrbar/resolver-js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alonrbar/resolver-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alonrbar/resolver-js/issues"
+  },
+  "main": "dist/resolver-js.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "dev": "webpack --config webpack.dev.js --watch",
+    "lint": "yarn lint-lint --silent",
+    "lint-lint": "tslint \"./{src,test}/**/*.{ts,tsx}\" --exclude \"./**/*.d.ts\"",
+    "test": "mocha-webpack --require source-map-support/register --webpack-config webpack.test.js \"test/**/*.tests.ts\"",
+    "test-watch": "yarn test --watch",
+    "release": "yarn lint && yarn test && webpack --config webpack.release.js"
+  },
+  "dependencies": {
+    "reflect-metadata": "0.1.12"
+  },
+  "devDependencies": {
+    "@types/chai": "4.1.3",
+    "@types/mocha": "5.2.0",
+    "@types/node": "8.5.2",
+    "chai": "4.1.2",
+    "mocha": "5.1.1",
+    "mocha-webpack": "1.1.0",
+    "source-map-support": "0.5.5",
+    "ts-loader": "4.3.0",
+    "ts-nameof": "1.0.0",
+    "ts-nameof-loader": "1.0.1",
+    "tslint": "5.10.0",
+    "typescript": "2.8.3",
+    "webpack": "4.8.2",
+    "webpack-cli": "2.1.3",
+    "webpack-merge": "4.1.2",
+    "webpack-node-externals": "1.7.2"
+  }
 }

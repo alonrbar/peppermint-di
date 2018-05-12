@@ -1,6 +1,6 @@
 import { NestedError } from './nestedError';
 
-class ResolveError extends NestedError {
+export class ResolveError extends NestedError {
 
     constructor(key: string, innerErr: Error) {
         super(`Failed to resolve '${key}'.`, innerErr);
@@ -10,5 +10,3 @@ class ResolveError extends NestedError {
     }
 
 }
-
-export { ResolveError };

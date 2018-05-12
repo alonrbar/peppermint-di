@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { CreateOptions } from './createOptions';
+import { ResolveOptions } from './createOptions';
 import { ResolveError, TypeInferenceError } from './errors';
 import { Constructor, ContainerKey, Factory, IContainer } from './types';
 
@@ -36,7 +36,7 @@ export class Resolver implements IContainer {
     private readonly singletons = new Map<ContainerKey<any>, any>();
 
     /**
-     * @param logger e.g. console.log
+     * @param logger Optional logger method. E.g. console.log.
      */
     constructor(logger?: (msg: string) => void) {
         this.logger = logger || emptyLogger;
@@ -44,6 +44,9 @@ export class Resolver implements IContainer {
 
     // --- public methods --- //
 
+    /**
+     * Register a transient dependency.
+     */
     public register<T>(key: ContainerKey<T>, factory?: Factory<T>): void {
         this.validateKey(key);
 
@@ -65,7 +68,7 @@ export class Resolver implements IContainer {
     }
 
     /**
-     * Register singleton
+     * Register a singleton dependency.
      *
      * @param value Singleton object or a constructor function that will be
      * called once and it's result will be cached and re-served.
@@ -98,19 +101,19 @@ export class Resolver implements IContainer {
      * Resolve registered dependencies. 
      * This method can also resolve non-registered dependencies by calling the supplied constructor function.
      *
-     * @param {object} [params] The supplied parameters will be used directly instead of being resolved
+     * @param {object} [params] The supplied parameters will be used directly instead of being resolved.
      */
-    public get<T>(key: ContainerKey<T> | string, params?: any, options?: CreateOptions): T {
+    public get<T>(key: ContainerKey<T>, params?: any, options?: ResolveOptions): T {
         this.validateKey(key);
         return this.resolveSingleDependency<T>(key, params, options);
     }
 
     /**
-     * Resolve a function arguments and call it
+     * Resolve a function arguments and call it.
      * 
      * @param {object} [params] The supplied parameters will be used directly instead of being resolved
      */
-    public call(foo: Function, thisArg?: any, params?: any, options?: CreateOptions): any {
+    public call(foo: Function, thisArg?: any, params?: any, options?: ResolveOptions): any {
         const dependencies = this.resolveDependencies(foo, params, options);
         return foo.apply(thisArg, dependencies);
     }
@@ -137,10 +140,10 @@ export class Resolver implements IContainer {
      * 3. registered singletons
      * 4. construct
      */
-    private resolveSingleDependency<T>(key: ContainerKey<T>, params: any, options: CreateOptions): T {
+    private resolveSingleDependency<T>(key: ContainerKey<T>, params: any, options: ResolveOptions): T {
         const keyStr = this.getKeyString(key);
         params = params || {};
-        options = new CreateOptions(options);
+        options = new ResolveOptions(options);
 
         // from params
         const fromParams = params[keyStr];
@@ -220,7 +223,7 @@ export class Resolver implements IContainer {
         return singleton;
     }
 
-    private resolveCTor<T>(ctor: Constructor<T>, params: any, options: CreateOptions): T {
+    private resolveCTor<T>(ctor: Constructor<T>, params: any, options: ResolveOptions): T {
         const dependencies = this.resolveDependencies(ctor, params, options);
 
         if (Resolver.canReflect) {
@@ -241,7 +244,7 @@ export class Resolver implements IContainer {
         }
     }
 
-    private resolveDependencies(func: Function, params: any, options: CreateOptions): any[] {
+    private resolveDependencies(func: Function, params: any, options: ResolveOptions): any[] {
         if (typeof func !== 'function')
             throw new Error(`Invalid argument '${nameof(func)}'. Expected function.`);
 

@@ -11,7 +11,7 @@ import "reflect-metadata";
  *    }
  * }
  * 
- * To understand more about how or why it works read here:
+ * To see more about how or why it works read here:
  * https://www.typescriptlang.org/docs/handbook/decorators.html#metadata
  */
 export function i(interfaceSymbol: symbol): ParameterDecorator {

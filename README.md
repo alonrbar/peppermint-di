@@ -259,4 +259,4 @@ class ResolveOptions {
 
 ## Changelog
 
-The change log can be found [here](https://github.com/alonrbar/redux-app/blob/master/CHANGELOG.md).
+The change log can be found [here](https://github.com/alonrbar/peppermint-di/blob/master/CHANGELOG.md).

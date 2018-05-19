@@ -24,8 +24,4 @@ export class ResolveOptions {
      * Parameters specified here will be used directly instead of being resolved.
      */
     public params?: IDictionary<any> = {};
-
-    constructor(initial?: Partial<ResolveOptions>) {
-        Object.assign(this, initial);
-    }
 }

@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { ResolveError, TypeInferenceError } from './errors';
 import { ResolveOptions } from './resolveOptions';
 import { Constructor, ContainerKey, Factory, PrimitiveContainerKey } from './types';
+const defaultsDeep = require('lodash.defaultsdeep');
 
 // tslint:disable:ban-types
 
@@ -197,7 +198,7 @@ export class Container {
      */
     private resolveSingleDependency<T>(key: ContainerKey<T>, options: ResolveOptions): T {
         const keyStr = this.getKeyString(key);
-        options = new ResolveOptions(options);
+        options = defaultsDeep(options, new ResolveOptions());
 
         // from params
         const fromParams = options.params[keyStr];

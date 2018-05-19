@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.0.1 - 2018-05-19](https://github.com/alonrbar/peppermint-di/tree/v1.0.1)
+
+### Fixed
+
+- Embarrassing readme typo :)
+
 ## [1.0.0 - 2018-05-19](https://github.com/alonrbar/peppermint-di/tree/v1.0.0)
 
 - Stable version.

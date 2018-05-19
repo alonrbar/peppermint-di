@@ -1,6 +1,6 @@
 # peppermint-di
 
-SomeService injection container for TypeScript and JavaScript.
+Dependency injection container for TypeScript and JavaScript.
 
 This project was originally based on [this blog post](http://www.yusufaytas.com/SomeService-injection-in-javascript/) by Yusuf Aytas as it appeared in [this StackOverflow question](https://stackoverflow.com/questions/20058391/javascript-SomeService-injection).  
 It has since evolved to support:

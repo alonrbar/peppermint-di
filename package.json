@@ -1,6 +1,6 @@
 {
   "name": "peppermint-di",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Dependency injection container for TypeScript and JavaScript",
   "keywords": [
     "DI",

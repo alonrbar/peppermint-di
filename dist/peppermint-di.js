@@ -93,8 +93,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(/*! reflect-metadata */ "reflect-metadata");
-var resolveOptions_1 = __webpack_require__(/*! ./resolveOptions */ "./src/resolveOptions.ts");
 var errors_1 = __webpack_require__(/*! ./errors */ "./src/errors/index.ts");
+var resolveOptions_1 = __webpack_require__(/*! ./resolveOptions */ "./src/resolveOptions.ts");
+var defaultsDeep = __webpack_require__(/*! lodash.defaultsdeep */ "lodash.defaultsdeep");
 function emptyLogger(msg) {
 }
 var Container = (function () {
@@ -130,9 +131,8 @@ var Container = (function () {
             });
         }
         else if (type) {
-            if (typeof type !== 'function') {
+            if (typeof type !== 'function')
                 throw new Error("Invalid argument '" + "type" + "'. Constructor function expected.");
-            }
             this.logger("Registering '" + keyStr + "' (" + "type" + " as constructor)");
             this.factories.set(key, function () {
                 return _this.resolveCTor(type, null);
@@ -203,7 +203,7 @@ var Container = (function () {
     };
     Container.prototype.resolveSingleDependency = function (key, options) {
         var keyStr = this.getKeyString(key);
-        options = new resolveOptions_1.ResolveOptions(options);
+        options = defaultsDeep(options, new resolveOptions_1.ResolveOptions());
         var fromParams = options.params[keyStr];
         if (fromParams !== undefined) {
             this.logger("Resolving '" + keyStr + "' from params");
@@ -568,11 +568,10 @@ exports.injectable = injectable;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ResolveOptions = (function () {
-    function ResolveOptions(initial) {
+    function ResolveOptions() {
         this.optionalParameters = false;
         this.constructUnregistered = true;
         this.params = {};
-        Object.assign(this, initial);
     }
     return ResolveOptions;
 }());
@@ -591,6 +590,18 @@ exports.ResolveOptions = ResolveOptions;
 
 module.exports = __webpack_require__(/*! C:\Users\Alon\Documents\devel\peppermint-di\src\index.ts */"./src/index.ts");
 
+
+/***/ }),
+
+/***/ "lodash.defaultsdeep":
+/*!**************************************!*\
+  !*** external "lodash.defaultsdeep" ***!
+  \**************************************/
+/*! no static exports found */
+/*! ModuleConcatenation bailout: Module is not an ECMAScript module */
+/***/ (function(module, exports) {
+
+module.exports = require("lodash.defaultsdeep");
 
 /***/ }),
 

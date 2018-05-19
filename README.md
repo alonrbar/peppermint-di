@@ -1,4 +1,5 @@
-# resolver-js
+# peppermint-di
+
 Dependency injection container for TypeScript and JavaScript.
 
 This project was originally based on [this blog post](http://www.yusufaytas.com/dependency-injection-in-javascript/) by Yusuf Aytas as it appeared in [this StackOverflow question](https://stackoverflow.com/questions/20058391/javascript-dependency-injection).  
@@ -7,13 +8,13 @@ It has since evolved to support singleton registration, optional parameters, Typ
 ## Installation
 
 ```shell
-yarn add resolver-js
+yarn add peppermint-di
 ```
 
 or
 
 ```shell
-npm install --save resolver-js
+npm install --save peppermint-di
 ```
 
 ## Short Example - TypeScript
@@ -23,6 +24,7 @@ class SomeService {
     // ...
 }
 
+@injectable
 class SomeClass {
     constructor(someService: SomeService) {
         // ...
@@ -60,7 +62,7 @@ const myClass = container.get(SomeClass);
 
 ## API
 
-Currently the readme includes only a brief overview of the Container API. For a more comprehensive review see the [typing file](https://github.com/alonrbar/resolver-js/blob/master/dist/index.d.ts).
+Currently the readme includes only a brief overview of the Container API. For a more comprehensive review see the [typing file](https://github.com/alonrbar/peppermint-di/blob/master/dist/index.d.ts).
 
 Register a transient dependency.
 

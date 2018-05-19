@@ -6,7 +6,7 @@ module.exports = {
     entry: [path.resolve('./src/index.ts')],
     output: {
         path: path.resolve('./dist'),        
-        library: 'resolver-js',
+        library: 'peppermint-di',
         libraryTarget: 'umd',
         umdNamedDefine: true
     },

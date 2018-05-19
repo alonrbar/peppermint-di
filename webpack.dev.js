@@ -5,7 +5,7 @@ module.exports = merge(base, {
     mode: 'development',
     devtool: 'sourcemap',
     output: {
-        filename: 'resolver-js.js',
+        filename: 'peppermint-di.js',
         devtoolModuleFilenameTemplate: '[absolute-resource-path]',
         devtoolFallbackModuleFilenameTemplate: '[absolute-resource-path]?[hash]'
     }

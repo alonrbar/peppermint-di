@@ -5,12 +5,8 @@
 
 /**
  * A dependency injection container
- *
- * Based on: 
- * https://stackoverflow.com/questions/20058391/javascript-dependency-injection
- * http://www.yusufaytas.com/dependency-injection-in-javascript/
  */
-export class Container implements IContainer {
+export class Container {
 
     /**
      * @param logger Optional logger method. E.g. console.log.
@@ -19,31 +15,57 @@ export class Container implements IContainer {
 
     /**
      * Register a transient dependency.
+     * 
+     * @param key The type to register.
+     * @param type Optional. Concrete type to return instead of the 'key' parameter.
      */
-    public register<T>(key: ContainerKey<T>, factory?: Factory<T>): void;
+    register<T>(key: Constructor<T>, type?: Constructor<T>): void;
+    
+    /**
+     * Register a transient dependency.
+     * 
+     * @param key String (for JavaScript) or symbol (for TypeScript interfaces).
+     * @param type The type to register.
+     */
+    register<T>(key: PrimitiveContainerKey, type: Constructor<T>): void;
+
+    /**
+     * Register a transient dependency.
+     */
+    registerFactory<T>(key: ContainerKey<T>, factory: Factory<T>): void;
 
     /**
      * Register a singleton dependency.
      *
-     * @param value Singleton object or a constructor function that will be
+     * @param key The type to register.
+     * @param valueOrType Singleton object or a constructor function that will be
      * called once and it's result will be cached and re-served.
      */
-    public registerSingle<T>(key: ContainerKey<T>, value?: T | Factory<T>): void;
+    registerSingle<T>(key: Constructor<T>, valueOrType?: T | Constructor<T>): void;
 
     /**
-     * Resolve registered dependencies. 
-     * This method can also resolve non-registered dependencies by calling the supplied constructor function.
+     * Register a singleton dependency.
      *
-     * @param {object} [params] The supplied parameters will be used directly instead of being resolved.
+     * @param key String (for JavaScript) or symbol (for TypeScript interfaces).
+     * @param valueOrType Singleton object or a constructor function that will be
+     * called once and it's result will be cached and re-served.
      */
-    public get<T>(key: ContainerKey<T>, params?: any, options?: ResolveOptions): T;
+    registerSingle<T>(key: PrimitiveContainerKey, valueOrType: T | Constructor<T>): void;
+
+    /**
+     * Register a singleton dependency.
+     */
+    registerSingleFactory<T>(key: ContainerKey<T>, factory: Factory<T>): void;
+
+    /**
+     * Get an instance of T.
+     */
+    get<T>(key: ContainerKey<T>, options?: ResolveOptions): T;
 
     /**
      * Resolve function arguments and call it.
-     * 
-     * @param {object} [params] The supplied parameters will be used directly instead of being resolved.
      */
-    public call(foo: Function, thisArg?: any, params?: any, options?: ResolveOptions): any;
+    call(foo: Function, thisArg?: any, options?: ResolveOptions): any;
 }
 
 //
@@ -54,18 +76,15 @@ export interface Constructor<T> {
     new(...args: any[]): T;
 }
 
+export interface IDictionary<T> {
+    [key: string]: T;
+}
+
 export declare type Factory<T> = () => T;
 
-export declare type ContainerKey<T> = Constructor<T> | string | symbol;
+export declare type ContainerKey<T> = Constructor<T> | PrimitiveContainerKey;
 
-export interface IResolver {
-    get<T>(key: ContainerKey<T>, params?: any): T;
-}
-
-export interface IContainer extends IResolver {
-    register<T>(key: ContainerKey<T>, factory?: Factory<T>): void;
-    registerSingle<T>(key: ContainerKey<T>, value?: T | Factory<T>): void;
-}
+export declare type PrimitiveContainerKey = string | symbol;
 
 //
 // options
@@ -79,7 +98,7 @@ export class ResolveOptions {
      * 
      * Default value: false
      */
-    public optionalParameters?: boolean;
+    optionalParameters?: boolean;
 
     /**
      * Set to 'false' if you don't want the injector to automatically try to
@@ -87,7 +106,12 @@ export class ResolveOptions {
      *
      * Default value: true
      */
-    public constructUnregistered?: boolean;
+    constructUnregistered?: boolean;
+
+    /**
+     * Parameters specified here will be used directly instead of being resolved.
+     */
+    params?: IDictionary<any>;
 
     constructor(initial?: Partial<ResolveOptions>);
 }

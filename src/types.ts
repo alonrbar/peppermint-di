@@ -1,16 +1,15 @@
+
+// tslint:disable-next-line:interface-name
 export interface Constructor<T> {
     new(...args: any[]): T;
 }
 
-export declare type Factory<T> = () => T;
-
-export declare type ContainerKey<T> = Constructor<T> | string | symbol;
-
-export interface IResolver {
-    get<T>(key: ContainerKey<T>, params?: any): T;
+export interface IDictionary<T> {
+    [key: string]: T;
 }
 
-export interface IContainer extends IResolver {
-    register<T>(key: ContainerKey<T>, factory?: Factory<T>): void;
-    registerSingle<T>(key: ContainerKey<T>, value?: T | Factory<T>): void;
-}
+export type Factory<T> = () => T;
+
+export type ContainerKey<T> = Constructor<T> | PrimitiveContainerKey;
+
+export type PrimitiveContainerKey = string | symbol;

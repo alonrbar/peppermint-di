@@ -1,13 +1,15 @@
 import { expect } from 'chai';
 import { Container, injectable } from 'src';
 
+// tslint:disable:no-unused-expression
+
 describe(nameof(Container), () => {
 
     describe('constructor', () => {
 
-        it('works without arguments', () => {
-            const resolver = new Container();
-            expect(resolver).to.exist;
+        it('does not throw when called with no arguments', () => {
+            const container = new Container();
+            expect(container).to.exist;
         });
 
     });
@@ -25,16 +27,16 @@ describe(nameof(Container), () => {
 
                 public dep: Dependency;
 
-                constructor(dep: Dependency ) {
+                constructor(dep: Dependency) {
                     this.dep = dep;
                 }
             }
 
-            const resolver = new Container();
-            resolver.register(Dependency);
+            const container = new Container();
+            container.register(Dependency);
 
-            const myClass = resolver.get(MyClass);
-            expect(myClass.dep).to.be.instanceOf(Dependency);;
+            const myClass = container.get(MyClass);
+            expect(myClass.dep).to.be.instanceOf(Dependency);
         });
 
     });

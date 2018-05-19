@@ -1,7 +1,7 @@
 import 'reflect-metadata';
-import { ResolveOptions } from './createOptions';
 import { ResolveError, TypeInferenceError } from './errors';
-import { Constructor, ContainerKey, Factory, IContainer } from './types';
+import { ResolveOptions } from './resolveOptions';
+import { Constructor, ContainerKey, Factory, PrimitiveContainerKey } from './types';
 
 // tslint:disable:ban-types
 
@@ -16,7 +16,7 @@ function emptyLogger(msg: string) {
  * https://stackoverflow.com/questions/20058391/javascript-dependency-injection
  * http://www.yusufaytas.com/dependency-injection-in-javascript/
  */
-export class Container implements IContainer {
+export class Container {
 
     private static get canReflect(): boolean {
         if (Container._canReflect === undefined) {
@@ -28,7 +28,7 @@ export class Container implements IContainer {
         }
         return Container._canReflect;
     }
-    private static _canReflect: boolean;    
+    private static _canReflect: boolean;
 
     private readonly logger: (msg: string) => void;
     private readonly factories = new Map<ContainerKey<any>, Factory<any>>();
@@ -46,51 +46,97 @@ export class Container implements IContainer {
 
     /**
      * Register a transient dependency.
+     * 
+     * @param key The type to register.
+     * @param type Optional. Concrete type to return instead of the 'key' parameter.
      */
-    public register<T>(key: ContainerKey<T>, factory?: Factory<T>): void {
+    public register<T>(key: Constructor<T>, type?: Constructor<T>): void;
+    /**
+     * Register a transient dependency.
+     * 
+     * @param key String (for JavaScript) or symbol (for TypeScript interfaces).
+     * @param type The type to register.
+     */
+    public register<T>(key: PrimitiveContainerKey, type: Constructor<T>): void;
+    public register<T>(key: ContainerKey<T>, type?: Constructor<T>): void {
         this.validateKey(key);
 
         const keyStr = this.getKeyString(key);
 
-        if ((factory === null || factory === undefined) && typeof key === 'function') {
-            this.logger(`Registering '${keyStr}' (constructor)`);
+        // key is constructor
+        if ((type === null || type === undefined) && typeof key === 'function') {
+
+            this.logger(`Registering '${keyStr}' (${nameof(key)} as constructor)`);
             this.factories.set(key, () => {
-                return this.resolveCTor(key, null, null);
+                return this.resolveCTor(key, null);
             });
 
-        } else if (factory) {
-            this.logger(`Registering '${keyStr}' (factory callback)`);
-            this.factories.set(key, factory);
+        } else if (type) {
+
+            if (typeof type !== 'function')
+                throw new Error(`Invalid argument '${nameof(type)}'. Constructor function expected.`);
+
+            // key is primitive or "interface type", type is concrete type
+            this.logger(`Registering '${keyStr}' (${nameof(type)} as constructor)`);
+            this.factories.set(key, () => {
+                return this.resolveCTor(type, null);
+            });
 
         } else {
-            throw new Error(`Missing argument '${factory}'.`);
+            throw new Error(`Missing argument '${nameof(type)}'.`);
         }
+    }
+
+    /**
+     * Register a transient dependency.
+     */
+    public registerFactory<T>(key: ContainerKey<T>, factory: Factory<T>): void {
+        this.validateKey(key);
+
+        if (typeof factory !== 'function')
+            throw new Error(`Invalid argument '${factory}'. Factory function expected.`);
+
+        const keyStr = this.getKeyString(key);
+        this.logger(`Registering '${keyStr}' (factory callback)`);
+        this.factories.set(key, factory);
     }
 
     /**
      * Register a singleton dependency.
      *
+     * @param key The type to register.
      * @param value Singleton object or a constructor function that will be
      * called once and it's result will be cached and re-served.
      */
-    public registerSingle<T>(key: ContainerKey<T>, value?: T | Factory<T>): void {
+    public registerSingle<T>(key: Constructor<T>, value?: T | Constructor<T>): void;
+    /**
+     * Register a singleton dependency.
+     *
+     * @param key String (for JavaScript) or symbol (for TypeScript interfaces).
+     * @param value Singleton object or a constructor function that will be
+     * called once and it's result will be cached and re-served.
+     */
+    public registerSingle<T>(key: PrimitiveContainerKey, value: T | Constructor<T>): void;
+    public registerSingle<T>(key: ContainerKey<T>, value?: T | Constructor<T>): void {
         this.validateKey(key);
 
         const keyStr = this.getKeyString(key);
 
         if ((value === null || value === undefined) && typeof key === 'function') {
-            this.logger(`Registering '${keyStr}' as singleton (constructor)`);
+            this.logger(`Registering '${keyStr}' as singleton (${nameof(key)} as constructor)`);
             this.potentialSingletons.set(key, () => {
-                return this.resolveCTor(key, null, null);
+                return this.resolveCTor(key, null);
             });
 
         } else if (typeof value === 'object') {
-            this.logger(`Registering '${keyStr}' as singleton (value)`);
+            this.logger(`Registering '${keyStr}' as singleton (value as instance)`);
             this.singletons.set(key, value);
 
         } else if (typeof value === 'function') {
-            this.logger(`Registering '${keyStr}' as singleton (factory callback)`);
-            this.potentialSingletons.set(key, value);
+            this.logger(`Registering '${keyStr}' as singleton (value as constructor)`);
+            this.potentialSingletons.set(key, () => {
+                return this.resolveCTor(value, null);
+            });
 
         } else {
             throw new Error(`Invalid argument '${nameof(value)}'. Expected object or function.`);
@@ -98,23 +144,32 @@ export class Container implements IContainer {
     }
 
     /**
-     * Resolve registered dependencies. 
-     * This method can also resolve non-registered dependencies by calling the supplied constructor function.
-     *
-     * @param {object} [params] The supplied parameters will be used directly instead of being resolved.
+     * Register a singleton dependency.
      */
-    public get<T>(key: ContainerKey<T>, params?: any, options?: ResolveOptions): T {
+    public registerSingleFactory<T>(key: ContainerKey<T>, factory: Factory<T>): void {
         this.validateKey(key);
-        return this.resolveSingleDependency<T>(key, params, options);
+
+        if (typeof factory !== 'function')
+            throw new Error(`Invalid argument '${factory}'. Factory function expected.`);
+
+        const keyStr = this.getKeyString(key);
+        this.logger(`Registering '${keyStr}' as singleton (factory callback)`);
+        this.potentialSingletons.set(key, factory);
+    }
+
+    /**
+     * Get an instance of T.
+     */
+    public get<T>(key: ContainerKey<T>, options?: ResolveOptions): T {
+        this.validateKey(key);
+        return this.resolveSingleDependency<T>(key, options);
     }
 
     /**
      * Resolve function arguments and call it.
-     * 
-     * @param {object} [params] The supplied parameters will be used directly instead of being resolved
      */
-    public call(foo: Function, thisArg?: any, params?: any, options?: ResolveOptions): any {
-        const dependencies = this.resolveDependencies(foo, params, options);
+    public call(foo: Function, thisArg?: any, options?: ResolveOptions): any {
+        const dependencies = this.resolveDependencies(foo, options);
         return foo.apply(thisArg, dependencies);
     }
 
@@ -140,13 +195,12 @@ export class Container implements IContainer {
      * 3. registered singletons
      * 4. construct
      */
-    private resolveSingleDependency<T>(key: ContainerKey<T>, params: any, options: ResolveOptions): T {
+    private resolveSingleDependency<T>(key: ContainerKey<T>, options: ResolveOptions): T {
         const keyStr = this.getKeyString(key);
-        params = params || {};
         options = new ResolveOptions(options);
 
         // from params
-        const fromParams = params[keyStr];
+        const fromParams = options.params[keyStr];
         if (fromParams !== undefined) {
             this.logger(`Resolving '${keyStr}' from params`);
             return fromParams;
@@ -178,7 +232,7 @@ export class Container implements IContainer {
         // construct
         if (options.constructUnregistered && typeof key === 'function') {
             this.logger(`Resolving '${keyStr}' by invoking as constructor`);
-            return this.resolveCTor(key, params, options);
+            return this.resolveCTor(key, options);
         }
 
         // treat as optional parameter
@@ -223,8 +277,8 @@ export class Container implements IContainer {
         return singleton;
     }
 
-    private resolveCTor<T>(ctor: Constructor<T>, params: any, options: ResolveOptions): T {
-        const dependencies = this.resolveDependencies(ctor, params, options);
+    private resolveCTor<T>(ctor: Constructor<T>, options: ResolveOptions): T {
+        const dependencies = this.resolveDependencies(ctor, options);
 
         if (Container.canReflect) {
             return Reflect.construct(ctor, dependencies);
@@ -244,7 +298,7 @@ export class Container implements IContainer {
         }
     }
 
-    private resolveDependencies(func: Function, params: any, options: ResolveOptions): any[] {
+    private resolveDependencies(func: Function, options: ResolveOptions): any[] {
         if (typeof func !== 'function')
             throw new Error(`Invalid argument '${nameof(func)}'. Expected function.`);
 
@@ -255,7 +309,7 @@ export class Container implements IContainer {
 
             let dependency: any;
             try {
-                dependency = this.resolveSingleDependency(argKey, params, options);
+                dependency = this.resolveSingleDependency(argKey, options);
             } catch (e) {
                 throw new ResolveError(func.name || '<anonymous>', e);
             }
@@ -333,7 +387,7 @@ export class Container implements IContainer {
 
         return args;
     }
-
+    
     private getArgumentTypes(func: Function): Function[] {
 
         if (Container.canReflect) {

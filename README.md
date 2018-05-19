@@ -7,7 +7,7 @@ Dependency injection container for TypeScript and JavaScript.
 [![dependencies](https://david-dm.org/alonrbar/peppermint-di.svg)](https://github.com/alonrbar/peppermint-di)
 [![dependencies](https://david-dm.org/alonrbar/peppermint-di/dev-status.svg)](https://github.com/alonrbar/peppermint-di)
 
-This project was originally based on [this blog post](http://www.yusufaytas.com/SomeService-injection-in-javascript/) by Yusuf Aytas as it appeared in [this StackOverflow question](https://stackoverflow.com/questions/20058391/javascript-SomeService-injection).  
+This project was originally based on [this blog post](http://www.yusufaytas.com/dependency-injection-in-javascript/) by Yusuf Aytas as it appeared in [this StackOverflow question](https://stackoverflow.com/questions/20058391/javascript-SomeService-injection).  
 It has since evolved to support:
 
 - TypeScript

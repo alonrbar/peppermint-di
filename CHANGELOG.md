@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.0.4 - 2018-05-19](https://github.com/alonrbar/peppermint-di/tree/v1.0.4)
+
+### Fixed
+
+- Link to Yusuf's blog post (well yes, this search replace in the readme was a bad idea...).
+
 ## [1.0.3 - 2018-05-19](https://github.com/alonrbar/peppermint-di/tree/v1.0.3)
 
 ### Added

@@ -8,7 +8,8 @@ module.exports = {
         path: path.resolve('./dist'),        
         library: 'peppermint-di',
         libraryTarget: 'umd',
-        umdNamedDefine: true
+        umdNamedDefine: true,
+        globalObject: 'this'
     },
     externals: [nodeExternals()],
     module: {

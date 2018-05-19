@@ -12,7 +12,7 @@ module.exports = merge(base, {
         noEmitOnErrors: true,
         minimizer: [new UglifyJsPlugin({
             parallel: true,
-            sourceMap: true            
+            sourceMap: false
         })]
     }
 });

@@ -7,7 +7,7 @@
 		exports["peppermint-di"] = factory();
 	else
 		root["peppermint-di"] = factory();
-})(window, function() {
+})(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -81,24 +81,123 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/container.ts":
-/*!**************************!*\
-  !*** ./src/container.ts ***!
-  \**************************/
-/*! no static exports found */
-/*! ModuleConcatenation bailout: Module is not an ECMAScript module */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ "./src/index.ts":
+/*!**********************************!*\
+  !*** ./src/index.ts + 8 modules ***!
+  \**********************************/
+/*! exports provided: Container, i, injectable, ResolveOptions, NestedError, ResolveError, TypeInferenceError */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-__webpack_require__(/*! reflect-metadata */ "reflect-metadata");
-var errors_1 = __webpack_require__(/*! ./errors */ "./src/errors/index.ts");
-var resolveOptions_1 = __webpack_require__(/*! ./resolveOptions */ "./src/resolveOptions.ts");
+// CONCATENATED MODULE: ./src/errors/nestedError.ts
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var NestedError = (function (_super) {
+    __extends(NestedError, _super);
+    function NestedError(message, innerError) {
+        var _this = _super.call(this, message) || this;
+        _this.stack = NestedError.createStack(_this.stack, innerError);
+        Object.setPrototypeOf(_this, NestedError.prototype);
+        return _this;
+    }
+    NestedError.createStack = function (myStack, innerError) {
+        if (!innerError)
+            return myStack;
+        myStack += '\n------------------------------------------------\n';
+        myStack += 'Inner Error: ';
+        if (innerError instanceof Error) {
+            myStack += innerError.stack;
+        }
+        else {
+            myStack += innerError.toString();
+        }
+        return myStack;
+    };
+    return NestedError;
+}(Error));
+
+
+// CONCATENATED MODULE: ./src/errors/resolveError.ts
+var resolveError_extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+
+var ResolveError = (function (_super) {
+    resolveError_extends(ResolveError, _super);
+    function ResolveError(key, innerErr) {
+        var _this = _super.call(this, "Failed to resolve '" + key + "'.", innerErr) || this;
+        Object.setPrototypeOf(_this, ResolveError.prototype);
+        return _this;
+    }
+    return ResolveError;
+}(NestedError));
+
+
+// CONCATENATED MODULE: ./src/errors/typeInferenceError.ts
+var typeInferenceError_extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var TypeInferenceError = (function (_super) {
+    typeInferenceError_extends(TypeInferenceError, _super);
+    function TypeInferenceError(message) {
+        var _this = _super.call(this, message) || this;
+        Object.setPrototypeOf(_this, TypeInferenceError.prototype);
+        return _this;
+    }
+    return TypeInferenceError;
+}(Error));
+
+
+// CONCATENATED MODULE: ./src/errors/index.ts
+
+
+
+
+// EXTERNAL MODULE: external "reflect-metadata"
+var external_reflect_metadata_ = __webpack_require__("reflect-metadata");
+
+// CONCATENATED MODULE: ./src/resolveOptions.ts
+var ResolveOptions = (function () {
+    function ResolveOptions() {
+        this.optionalParameters = false;
+        this.constructUnregistered = true;
+        this.params = {};
+    }
+    return ResolveOptions;
+}());
+
+
+// CONCATENATED MODULE: ./src/container.ts
+
+
+
 var defaultsDeep = __webpack_require__(/*! lodash.defaultsdeep */ "lodash.defaultsdeep");
 function emptyLogger(msg) {
 }
-var Container = (function () {
+var container_Container = (function () {
     function Container(logger) {
         this.factories = new Map();
         this.potentialSingletons = new Map();
@@ -203,7 +302,7 @@ var Container = (function () {
     };
     Container.prototype.resolveSingleDependency = function (key, options) {
         var keyStr = this.getKeyString(key);
-        options = defaultsDeep(options, new resolveOptions_1.ResolveOptions());
+        options = defaultsDeep(options, new ResolveOptions());
         var fromParams = options.params[keyStr];
         if (fromParams !== undefined) {
             this.logger("Resolving '" + keyStr + "' from params");
@@ -232,7 +331,7 @@ var Container = (function () {
             this.logger("Resolving '" + keyStr + "' as optional parameter (undefined)");
             return undefined;
         }
-        throw new errors_1.ResolveError(keyStr, new Error('Dependency is not registered.'));
+        throw new ResolveError(keyStr, new Error('Dependency is not registered.'));
     };
     Container.prototype.resolveFactory = function (key, factory) {
         try {
@@ -240,7 +339,7 @@ var Container = (function () {
         }
         catch (e) {
             var keyStr = this.getKeyString(key);
-            throw new errors_1.ResolveError(keyStr, e);
+            throw new ResolveError(keyStr, e);
         }
     };
     Container.prototype.resolveSingletonFactory = function (key, singletonFactory) {
@@ -250,13 +349,13 @@ var Container = (function () {
             singleton = singletonFactory();
         }
         catch (e) {
-            throw new errors_1.ResolveError(keyStr, e);
+            throw new ResolveError(keyStr, e);
         }
         try {
             this.singletons.set(key, singleton);
         }
         catch (e) {
-            throw new errors_1.ResolveError(keyStr, e);
+            throw new ResolveError(keyStr, e);
         }
         this.potentialSingletons.delete(key);
         return singleton;
@@ -286,7 +385,7 @@ var Container = (function () {
                 dependency = this.resolveSingleDependency(argKey, options);
             }
             catch (e) {
-                throw new errors_1.ResolveError(func.name || '<anonymous>', e);
+                throw new ResolveError(func.name || '<anonymous>', e);
             }
             dependencies.push(dependency);
         }
@@ -301,7 +400,7 @@ var Container = (function () {
             throw new Error('Failed reflecting function arguments.');
         var args = argTypes.map(function (type, index) {
             if (!type)
-                throw new errors_1.TypeInferenceError("Can not infer type of argument in index " + index + " of the function '" + func.name + "'.");
+                throw new TypeInferenceError("Can not infer type of argument in index " + index + " of the function '" + func.name + "'.");
             if (type.name !== 'Object' && type.name !== 'String')
                 return type;
             return argNames[index];
@@ -345,164 +444,10 @@ var Container = (function () {
     };
     return Container;
 }());
-exports.Container = Container;
 
 
-/***/ }),
+// CONCATENATED MODULE: ./src/i.ts
 
-/***/ "./src/errors/index.ts":
-/*!*****************************!*\
-  !*** ./src/errors/index.ts ***!
-  \*****************************/
-/*! no static exports found */
-/*! ModuleConcatenation bailout: Module is not an ECMAScript module */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(/*! ./nestedError */ "./src/errors/nestedError.ts"));
-__export(__webpack_require__(/*! ./resolveError */ "./src/errors/resolveError.ts"));
-__export(__webpack_require__(/*! ./typeInferenceError */ "./src/errors/typeInferenceError.ts"));
-
-
-/***/ }),
-
-/***/ "./src/errors/nestedError.ts":
-/*!***********************************!*\
-  !*** ./src/errors/nestedError.ts ***!
-  \***********************************/
-/*! no static exports found */
-/*! ModuleConcatenation bailout: Module is not an ECMAScript module */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var NestedError = (function (_super) {
-    __extends(NestedError, _super);
-    function NestedError(message, innerError) {
-        var _this = _super.call(this, message) || this;
-        _this.stack = NestedError.createStack(_this.stack, innerError);
-        Object.setPrototypeOf(_this, NestedError.prototype);
-        return _this;
-    }
-    NestedError.createStack = function (myStack, innerError) {
-        if (!innerError)
-            return myStack;
-        myStack += '\n------------------------------------------------\n';
-        myStack += 'Inner Error: ';
-        if (innerError instanceof Error) {
-            myStack += innerError.stack;
-        }
-        else {
-            myStack += innerError.toString();
-        }
-        return myStack;
-    };
-    return NestedError;
-}(Error));
-exports.NestedError = NestedError;
-
-
-/***/ }),
-
-/***/ "./src/errors/resolveError.ts":
-/*!************************************!*\
-  !*** ./src/errors/resolveError.ts ***!
-  \************************************/
-/*! no static exports found */
-/*! ModuleConcatenation bailout: Module is not an ECMAScript module */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var nestedError_1 = __webpack_require__(/*! ./nestedError */ "./src/errors/nestedError.ts");
-var ResolveError = (function (_super) {
-    __extends(ResolveError, _super);
-    function ResolveError(key, innerErr) {
-        var _this = _super.call(this, "Failed to resolve '" + key + "'.", innerErr) || this;
-        Object.setPrototypeOf(_this, ResolveError.prototype);
-        return _this;
-    }
-    return ResolveError;
-}(nestedError_1.NestedError));
-exports.ResolveError = ResolveError;
-
-
-/***/ }),
-
-/***/ "./src/errors/typeInferenceError.ts":
-/*!******************************************!*\
-  !*** ./src/errors/typeInferenceError.ts ***!
-  \******************************************/
-/*! no static exports found */
-/*! ModuleConcatenation bailout: Module is not an ECMAScript module */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var TypeInferenceError = (function (_super) {
-    __extends(TypeInferenceError, _super);
-    function TypeInferenceError(message) {
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, TypeInferenceError.prototype);
-        return _this;
-    }
-    return TypeInferenceError;
-}(Error));
-exports.TypeInferenceError = TypeInferenceError;
-
-
-/***/ }),
-
-/***/ "./src/i.ts":
-/*!******************!*\
-  !*** ./src/i.ts ***!
-  \******************/
-/*! no static exports found */
-/*! ModuleConcatenation bailout: Module is not an ECMAScript module */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-__webpack_require__(/*! reflect-metadata */ "reflect-metadata");
 function i(interfaceSymbol) {
     return function (target, parameterName, parameterIndex) {
         var paramTypes = Reflect.getMetadata('design:paramtypes', target);
@@ -510,72 +455,24 @@ function i(interfaceSymbol) {
         Reflect.defineMetadata('design:paramtypes', paramTypes, target);
     };
 }
-exports.i = i;
 
-
-/***/ }),
-
-/***/ "./src/index.ts":
-/*!**********************!*\
-  !*** ./src/index.ts ***!
-  \**********************/
-/*! no static exports found */
-/*! ModuleConcatenation bailout: Module is not an ECMAScript module */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(/*! ./errors */ "./src/errors/index.ts"));
-__export(__webpack_require__(/*! ./container */ "./src/container.ts"));
-__export(__webpack_require__(/*! ./i */ "./src/i.ts"));
-__export(__webpack_require__(/*! ./injectable */ "./src/injectable.ts"));
-__export(__webpack_require__(/*! ./resolveOptions */ "./src/resolveOptions.ts"));
-
-
-/***/ }),
-
-/***/ "./src/injectable.ts":
-/*!***************************!*\
-  !*** ./src/injectable.ts ***!
-  \***************************/
-/*! no static exports found */
-/*! ModuleConcatenation bailout: Module is not an ECMAScript module */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
+// CONCATENATED MODULE: ./src/injectable.ts
 function injectable(constructor) {
 }
-exports.injectable = injectable;
+
+// CONCATENATED MODULE: ./src/index.ts
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "NestedError", function() { return NestedError; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "ResolveError", function() { return ResolveError; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "TypeInferenceError", function() { return TypeInferenceError; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "Container", function() { return container_Container; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "i", function() { return i; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "injectable", function() { return injectable; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "ResolveOptions", function() { return ResolveOptions; });
 
 
-/***/ }),
 
-/***/ "./src/resolveOptions.ts":
-/*!*******************************!*\
-  !*** ./src/resolveOptions.ts ***!
-  \*******************************/
-/*! no static exports found */
-/*! ModuleConcatenation bailout: Module is not an ECMAScript module */
-/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-var ResolveOptions = (function () {
-    function ResolveOptions() {
-        this.optionalParameters = false;
-        this.constructUnregistered = true;
-        this.params = {};
-    }
-    return ResolveOptions;
-}());
-exports.ResolveOptions = ResolveOptions;
 
 
 /***/ }),

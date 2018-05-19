@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.0.5 - 2018-05-19](https://github.com/alonrbar/peppermint-di/tree/v1.0.5)
+
+### Fixed
+
+- Change webpack configuration for UMD bundling to workaround a bug in Webpack 4 (see: https://stackoverflow.com/questions/49111086/webpack-4-universal-library-target).
+- Fix ModuleConcatenation bailout.
+
 ## [1.0.4 - 2018-05-19](https://github.com/alonrbar/peppermint-di/tree/v1.0.4)
 
 ### Fixed

@@ -27,7 +27,7 @@ export class Container {
      * @param key String (for JavaScript) or symbol (for TypeScript interfaces).
      * @param type The type to register.
      */
-    register<T>(key: PrimitiveContainerKey, type: Constructor<T>): void;
+    register<T>(key: SimpleContainerKey, type: Constructor<T>): void;
 
     /**
      * Register a transient dependency.
@@ -50,7 +50,7 @@ export class Container {
      * @param valueOrType Singleton object or a constructor function that will be
      * called once and it's result will be cached and re-served.
      */
-    registerSingle<T>(key: PrimitiveContainerKey, valueOrType: T | Constructor<T>): void;
+    registerSingle<T>(key: SimpleContainerKey, valueOrType: T | Constructor<T>): void;
 
     /**
      * Register a singleton dependency.
@@ -82,9 +82,9 @@ export interface IDictionary<T> {
 
 export declare type Factory<T> = () => T;
 
-export declare type ContainerKey<T> = Constructor<T> | PrimitiveContainerKey;
+export declare type ContainerKey<T> = Constructor<T> | SimpleContainerKey;
 
-export declare type PrimitiveContainerKey = string | symbol;
+export declare type SimpleContainerKey = string | symbol;
 
 //
 // options
@@ -112,8 +112,6 @@ export class ResolveOptions {
      * Parameters specified here will be used directly instead of being resolved.
      */
     params?: IDictionary<any>;
-
-    constructor(initial?: Partial<ResolveOptions>);
 }
 
 //

@@ -10,6 +10,6 @@ export interface IDictionary<T> {
 
 export type Factory<T> = () => T;
 
-export type ContainerKey<T> = Constructor<T> | PrimitiveContainerKey;
+export type ContainerKey<T> = Constructor<T> | SimpleContainerKey;
 
-export type PrimitiveContainerKey = string | symbol;
+export type SimpleContainerKey = string | symbol;

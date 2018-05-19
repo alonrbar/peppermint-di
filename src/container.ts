@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { ResolveError, TypeInferenceError } from './errors';
 import { ResolveOptions } from './resolveOptions';
-import { Constructor, ContainerKey, Factory, PrimitiveContainerKey } from './types';
+import { Constructor, ContainerKey, Factory, SimpleContainerKey } from './types';
 const defaultsDeep = require('lodash.defaultsdeep');
 
 // tslint:disable:ban-types
@@ -58,7 +58,7 @@ export class Container {
      * @param key String (for JavaScript) or symbol (for TypeScript interfaces).
      * @param type The type to register.
      */
-    public register<T>(key: PrimitiveContainerKey, type: Constructor<T>): void;
+    public register<T>(key: SimpleContainerKey, type: Constructor<T>): void;
     public register<T>(key: ContainerKey<T>, type?: Constructor<T>): void {
         this.validateKey(key);
 
@@ -117,7 +117,7 @@ export class Container {
      * @param value Singleton object or a constructor function that will be
      * called once and it's result will be cached and re-served.
      */
-    public registerSingle<T>(key: PrimitiveContainerKey, value: T | Constructor<T>): void;
+    public registerSingle<T>(key: SimpleContainerKey, value: T | Constructor<T>): void;
     public registerSingle<T>(key: ContainerKey<T>, value?: T | Constructor<T>): void {
         this.validateKey(key);
 

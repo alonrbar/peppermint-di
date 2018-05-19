@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.0.3 - 2018-05-19](https://github.com/alonrbar/peppermint-di/tree/v1.0.3)
+
+### Added
+
+- Readme badges.
+
 ## [1.0.2 - 2018-05-19](https://github.com/alonrbar/peppermint-di/tree/v1.0.2)
 
 ### Fixed

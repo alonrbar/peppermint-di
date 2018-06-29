@@ -446,4 +446,122 @@ describe(nameof(Container), () => {
 
     });    
 
+    describe(nameof(Container.prototype.registerInitializer), () => {
+
+        it('initializer is invoked for each created instance', () => {
+
+            class Dependency {
+                public name: string;
+            }
+
+            const container = new Container();
+
+            container.register(Dependency);
+
+            let initializedInstances = 0;
+            container.registerInitializer(Dependency, dep => {
+                dep.name = 'initialized_' + (initializedInstances++);
+            });
+
+            const dep1 = container.get(Dependency);
+            const dep2 = container.get(Dependency);
+
+            expect(initializedInstances).to.eql(2);
+            expect(dep1.name).to.eql('initialized_0');
+            expect(dep2.name).to.eql('initialized_1');
+        });
+
+        it('initializer is not invoked for params', () => {
+
+            class Dependency {
+                public name: string;
+            }
+
+            @injectable
+            class MyClass {
+
+                public dep: Dependency;
+
+                constructor(dep: Dependency) {
+                    this.dep = dep;
+                }
+            }
+
+            const container = new Container();
+
+            container.register(Dependency);
+
+            let initializedInstances = 0;
+            container.registerInitializer(Dependency, dep => {
+                dep.name = 'initialized_' + (initializedInstances++);
+            });
+
+            const customDep = new Dependency();
+            customDep.name = 'custom name';
+
+            const myClass = container.get(MyClass, { params: { [nameof(Dependency)]: customDep } });
+
+            expect(initializedInstances).to.eql(0);
+            expect(myClass.dep.name).to.eql('custom name');
+        });
+
+        it('initializer is invoked only once for singletons', () => {
+
+            class Dependency {
+                public name: string;
+            }
+
+            const container = new Container();
+
+            container.registerSingle(Dependency);
+
+            let initializedInstances = 0;
+            container.registerInitializer(Dependency, dep => {
+                dep.name = 'initialized_' + (initializedInstances++);
+            });
+
+            const dep1 = container.get(Dependency);
+            const dep2 = container.get(Dependency);
+            const dep3 = container.get(Dependency);
+
+            expect(initializedInstances).to.eql(1);
+            expect(dep1.name).to.eql('initialized_0');
+            expect(dep2.name).to.eql('initialized_0');
+            expect(dep3.name).to.eql('initialized_0');
+        });
+
+        it('multiple initializers are always invoked in order', () => {
+
+            class Dependency {
+                public num: number;
+            }
+
+            const container = new Container();
+
+            container.register(Dependency);
+
+            container.registerInitializer(Dependency, dep => {
+                dep.num = 0;
+            });
+
+            container.registerInitializer(Dependency, dep => {
+                dep.num += 5;
+            });
+
+            container.registerInitializer(Dependency, dep => {
+                dep.num *= 3;
+            });
+
+            container.registerInitializer(Dependency, dep => {
+                dep.num -= 4;
+            });
+
+            for (let count = 0; count < 10; count++) {
+                const myDep = container.get(Dependency);
+                expect(myDep.num).to.eql(11);
+            }
+        });
+
+    });
+
 });

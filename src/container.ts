@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { ResolveError, TypeInferenceError } from './errors';
 import { ResolveOptions } from './resolveOptions';
-import { Constructor, ContainerKey, Factory, SimpleContainerKey } from './types';
+import { Constructor, ContainerKey, Factory, Initializer, SimpleContainerKey } from './types';
 const defaultsDeep = require('lodash.defaultsdeep');
 
 // tslint:disable:ban-types
@@ -33,6 +33,7 @@ export class Container {
 
     private readonly logger: (msg: string) => void;
     private readonly factories = new Map<ContainerKey<any>, Factory<any>>();
+    private readonly initializers = new Map<ContainerKey<any>, Initializer<any>[]>();
     private readonly potentialSingletons = new Map<ContainerKey<any>, Factory<any>>();
     private readonly singletons = new Map<ContainerKey<any>, any>();
 
@@ -158,6 +159,15 @@ export class Container {
         this.potentialSingletons.set(key, factory);
     }
 
+    public registerInitializer<T>(key: ContainerKey<T>, initializer: Initializer<T>): void {
+        let initializersList = this.initializers.get(key);
+        if (!initializersList) {
+            initializersList = [];
+            this.initializers.set(key, initializersList);
+        }
+        initializersList.push(initializer);
+    }
+
     /**
      * Get an instance of T.
      */
@@ -211,7 +221,9 @@ export class Container {
         const factory = this.factories.get(key);
         if (factory !== undefined) {
             this.logger(`Resolving '${keyStr}' from internal registry`);
-            return this.resolveFactory(key, factory);
+            const instance = this.resolveFactory(key, factory);
+            this.initializeInstance(key, instance);
+            return instance;
         }
 
         // from singletons
@@ -233,7 +245,9 @@ export class Container {
         // construct
         if (options.constructUnregistered && typeof key === 'function') {
             this.logger(`Resolving '${keyStr}' by invoking as constructor`);
-            return this.resolveCTor(key, options);
+            const instance = this.resolveCTor(key, options);
+            this.initializeInstance(key, instance);
+            return instance;
         }
 
         // treat as optional parameter
@@ -264,6 +278,9 @@ export class Container {
         } catch (e) {
             throw new ResolveError(keyStr, e);
         }
+
+        // initialize the singleton instance
+        this.initializeInstance(key, singleton);
 
         // cache it
         try {
@@ -296,6 +313,16 @@ export class Container {
             MiddlemanCTor.prototype = ctor.prototype;
 
             return new (MiddlemanCTor as any)();
+        }
+    }
+
+    private initializeInstance<T>(key: ContainerKey<T>, instance: T): void {
+        const initializersList = this.initializers.get(key);
+        if (!initializersList)
+            return;
+
+        for (const initializer of initializersList) {
+            initializer(instance);
         }
     }
 
@@ -388,7 +415,7 @@ export class Container {
 
         return args;
     }
-    
+
     private getArgumentTypes(func: Function): Function[] {
 
         if (Container.canReflect) {

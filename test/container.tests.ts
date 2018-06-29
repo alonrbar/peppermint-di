@@ -87,6 +87,7 @@ describe(nameof(Container), () => {
                 const myClass = container.get(MyClass, { params: { [nameof(Dependency)]: customDep } });
                 expect(myClass.dep).to.be.instanceOf(Dependency);
                 expect(myClass.dep.name).to.eql('custom name');
+                expect(myClass.dep).to.be.equal(customDep);
             });
 
             it('uses dependencies from params (javascript)', () => {
@@ -206,7 +207,7 @@ describe(nameof(Container), () => {
 
                 const container = new Container();
 
-                expect(() => container.get(MyClass, { constructUnregistered: false })).to.throw(ResolveError);                
+                expect(() => container.get(MyClass, { constructUnregistered: false })).to.throw(ResolveError);
             });
 
         });
@@ -214,7 +215,7 @@ describe(nameof(Container), () => {
 
     describe(nameof(Container.prototype.register), () => {
 
-        it('registers a dependency by string key', () => {
+        it('registers a transient dependency by string key', () => {
 
             class Dependency {
 
@@ -263,6 +264,54 @@ describe(nameof(Container), () => {
             expect(myClass1.dep).to.not.equal(myClass2.dep);
         });
 
+        it('registers an interface implementation', () => {
+
+            //
+            // the interface
+            //
+
+            interface IDependency {
+            }
+
+            const IDependency = Symbol('IDependency');  // tslint:disable-line:variable-name
+
+            //
+            // the concrete type
+            //
+
+            class ConcreteDependency implements IDependency {
+            }
+
+            //
+            // the class to resolve
+            //
+
+            @injectable
+            class MyClass {
+
+                public dep: IDependency;
+
+                constructor(@i(IDependency) dep: IDependency) {
+                    this.dep = dep;
+                }
+            }
+
+            //
+            // test
+            //
+
+            const container = new Container();
+            container.register(IDependency, ConcreteDependency);
+
+            const myClass = container.get(MyClass);
+            expect(myClass).to.be.instanceOf(MyClass);
+            expect(myClass.dep).to.be.instanceOf(ConcreteDependency);
+        });
+
+    });
+
+    describe(nameof(Container.prototype.registerFactory), () => {
+
         it('registers a transient dependency by factory', () => {
 
             class Dependency {
@@ -297,7 +346,11 @@ describe(nameof(Container), () => {
             expect(callCount).to.eql(2);
         });
 
-        it('registers a singleton instance', () => {
+    });
+
+    describe(nameof(Container.prototype.registerSingle), () => {
+
+        it('registers a singleton instance by value', () => {
 
             class Dependency {
 
@@ -352,7 +405,11 @@ describe(nameof(Container), () => {
             expect(myClass1).to.not.equal(myClass2);
             expect(myClass1.dep).to.equal(myClass2.dep);
             expect(myClass1.dep).to.be.instanceOf(Dependency);
-        });        
+        });
+
+    });
+
+    describe(nameof(Container.prototype.registerSingleFactory), () => {
 
         it('registers a singleton by factory', () => {
 
@@ -387,50 +444,6 @@ describe(nameof(Container), () => {
             expect(callCount).to.eql(1);
         });
 
-        it('registers an interface implementation', () => {
-
-            //
-            // the interface
-            //
-
-            interface IDependency {
-            }
-            
-            const IDependency = Symbol('IDependency');  // tslint:disable-line:variable-name
-
-            //
-            // the concrete type
-            //
-
-            class ConcreteDependency implements IDependency {
-            }
-
-            //
-            // the class to resolve
-            //
-
-            @injectable
-            class MyClass {
-
-                public dep: IDependency;
-
-                constructor(@i(IDependency) dep: IDependency) {
-                    this.dep = dep;
-                }
-            }
-
-            //
-            // test
-            //
-
-            const container = new Container();
-            container.register(IDependency, ConcreteDependency);
-
-            const myClass = container.get(MyClass);
-            expect(myClass).to.be.instanceOf(MyClass);
-            expect(myClass.dep).to.be.instanceOf(ConcreteDependency);
-        });
-
-    });
+    });    
 
 });

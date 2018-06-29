@@ -13,6 +13,7 @@ It has since evolved to support:
 - TypeScript
 - Singleton registration
 - Interface registration
+- Instance initializers
 - Optional parameters
 - and more...
 
@@ -77,7 +78,12 @@ const myClass = container.get(SomeClass);
 
 ## More Examples
 
-### Interface Registration - TypeScript
+- [Interface registration](#interface-registration-typescript)
+- [Instance initializers](#instance-initializers-typescript)
+- [Custom parameters - TypeScript](#custom-parameters-typescript)
+- [Custom parameters - JavaScript](#custom-parameters-javascript)
+
+### Interface registration - TypeScript
 
 ```javascript
 import { Container, i, injectable } from 'peppermint-di';
@@ -123,6 +129,26 @@ const myClass = container.get(MyClass);
 
 expect(myClass).to.be.instanceOf(MyClass);
 expect(myClass.myService).to.be.instanceOf(ConcreteSomeService);
+```
+
+### Instance initializers - TypeScript
+
+```javascript
+import { Container, injectable } from 'peppermint-di';
+
+class SomeService {
+    public someFeatureFlag = false;
+}
+
+const container = new Container();
+
+container.registerSingle(SomeService)
+container.registerInitializer(SomeService, serviceInstance => {
+    serviceInstance.someFeatureFlag = true;
+});
+
+const myService = container.get(SomeService);
+expect(myService.someFeatureFlag).to.be.true;
 ```
 
 ### Custom parameters - TypeScript
@@ -202,7 +228,7 @@ type ContainerKey<T> = Constructor<T> | SimpleContainerKey;
 type SimpleContainerKey = string | symbol;
 ```
 
-Register a transient SomeService.
+Register a transient service.
 
 ```javascript
 Container.register<T>(key: Constructor<T>, type?: Constructor<T>): void;
@@ -212,7 +238,7 @@ Container.register<T>(key: SimpleContainerKey, type: Constructor<T>): void;
 Container.registerFactory<T>(key: ContainerKey<T>, factory: Factory<T>): void;
 ```
 
-Register a singleton SomeService.
+Register a singleton service.
 
 ```javascript
 Container.registerSingle<T>(key: Constructor<T>, valueOrType?: T | Constructor<T>): void;
@@ -220,6 +246,14 @@ Container.registerSingle<T>(key: Constructor<T>, valueOrType?: T | Constructor<T
 Container.registerSingle<T>(key: SimpleContainerKey, valueOrType: T | Constructor<T>): void;
 
 Container.registerSingleFactory<T>(key: ContainerKey<T>, factory: Factory<T>): void;
+```
+
+Register an initializer.
+
+```javascript
+type Initializer<T> = (instance: T) => void;
+
+Container.registerInitializer<T>(key: ContainerKey<T>, initializer: Initializer<T>): void
 ```
 
 Get an instance of T.

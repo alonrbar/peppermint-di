@@ -58,6 +58,12 @@ export class Container {
     registerSingleFactory<T>(key: ContainerKey<T>, factory: Factory<T>): void;
 
     /**
+     * Register an initializer to be invoked each time a new instance of T is
+     * created by the container.
+     */
+    registerInitializer<T>(key: ContainerKey<T>, initializer: Initializer<T>): void
+
+    /**
      * Get an instance of T.
      */
     get<T>(key: ContainerKey<T>, options?: ResolveOptions): T;
@@ -81,6 +87,8 @@ export interface IDictionary<T> {
 }
 
 export declare type Factory<T> = () => T;
+
+export declare type Initializer<T> = (instance: T) => void;
 
 export declare type ContainerKey<T> = Constructor<T> | SimpleContainerKey;
 

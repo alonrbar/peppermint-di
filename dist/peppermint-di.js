@@ -200,6 +200,7 @@ function emptyLogger(msg) {
 var container_Container = (function () {
     function Container(logger) {
         this.factories = new Map();
+        this.initializers = new Map();
         this.potentialSingletons = new Map();
         this.singletons = new Map();
         this.logger = logger || emptyLogger;
@@ -244,7 +245,7 @@ var container_Container = (function () {
     Container.prototype.registerFactory = function (key, factory) {
         this.validateKey(key);
         if (typeof factory !== 'function')
-            throw new Error("Invalid argument '" + factory + "'. Factory function expected.");
+            throw new Error("Invalid argument '" + "factory" + "'. Factory function expected.");
         var keyStr = this.getKeyString(key);
         this.logger("Registering '" + keyStr + "' (factory callback)");
         this.factories.set(key, factory);
@@ -276,10 +277,23 @@ var container_Container = (function () {
     Container.prototype.registerSingleFactory = function (key, factory) {
         this.validateKey(key);
         if (typeof factory !== 'function')
-            throw new Error("Invalid argument '" + factory + "'. Factory function expected.");
+            throw new Error("Invalid argument '" + "factory" + "'. Factory function expected.");
         var keyStr = this.getKeyString(key);
         this.logger("Registering '" + keyStr + "' as singleton (factory callback)");
         this.potentialSingletons.set(key, factory);
+    };
+    Container.prototype.registerInitializer = function (key, initializer) {
+        this.validateKey(key);
+        if (typeof initializer !== 'function')
+            throw new Error("Invalid argument '" + "initializer" + "'. Initializer function expected.");
+        var keyStr = this.getKeyString(key);
+        this.logger("Registering an initializer for '" + keyStr + "'");
+        var initializersList = this.initializers.get(key);
+        if (!initializersList) {
+            initializersList = [];
+            this.initializers.set(key, initializersList);
+        }
+        initializersList.push(initializer);
     };
     Container.prototype.get = function (key, options) {
         this.validateKey(key);
@@ -311,7 +325,9 @@ var container_Container = (function () {
         var factory = this.factories.get(key);
         if (factory !== undefined) {
             this.logger("Resolving '" + keyStr + "' from internal registry");
-            return this.resolveFactory(key, factory);
+            var instance = this.resolveFactory(key, factory);
+            this.initializeInstance(key, instance);
+            return instance;
         }
         var singleton = this.singletons.get(key);
         if (singleton !== undefined) {
@@ -325,7 +341,9 @@ var container_Container = (function () {
         }
         if (options.constructUnregistered && typeof key === 'function') {
             this.logger("Resolving '" + keyStr + "' by invoking as constructor");
-            return this.resolveCTor(key, options);
+            var instance = this.resolveCTor(key, options);
+            this.initializeInstance(key, instance);
+            return instance;
         }
         if (options.optionalParameters) {
             this.logger("Resolving '" + keyStr + "' as optional parameter (undefined)");
@@ -351,6 +369,7 @@ var container_Container = (function () {
         catch (e) {
             throw new ResolveError(keyStr, e);
         }
+        this.initializeInstance(key, singleton);
         try {
             this.singletons.set(key, singleton);
         }
@@ -371,6 +390,15 @@ var container_Container = (function () {
             };
             MiddlemanCTor.prototype = ctor.prototype;
             return new MiddlemanCTor();
+        }
+    };
+    Container.prototype.initializeInstance = function (key, instance) {
+        var initializersList = this.initializers.get(key);
+        if (!initializersList)
+            return;
+        for (var _i = 0, initializersList_1 = initializersList; _i < initializersList_1.length; _i++) {
+            var initializer = initializersList_1[_i];
+            initializer(instance);
         }
     };
     Container.prototype.resolveDependencies = function (func, options) {

@@ -10,8 +10,8 @@ export interface IDictionary<T> {
 
 export type Factory<T> = () => T;
 
+export type Initializer<T> = (instance: T) => void;
+
 export type ContainerKey<T> = Constructor<T> | SimpleContainerKey;
 
 export type SimpleContainerKey = string | symbol;
-
-export type Initializer<T> = (instance: T) => void;

@@ -96,7 +96,7 @@ export class Container {
         this.validateKey(key);
 
         if (typeof factory !== 'function')
-            throw new Error(`Invalid argument '${factory}'. Factory function expected.`);
+            throw new Error(`Invalid argument '${nameof(factory)}'. Factory function expected.`);
 
         const keyStr = this.getKeyString(key);
         this.logger(`Registering '${keyStr}' (factory callback)`);
@@ -152,14 +152,26 @@ export class Container {
         this.validateKey(key);
 
         if (typeof factory !== 'function')
-            throw new Error(`Invalid argument '${factory}'. Factory function expected.`);
+            throw new Error(`Invalid argument '${nameof(factory)}'. Factory function expected.`);
 
         const keyStr = this.getKeyString(key);
         this.logger(`Registering '${keyStr}' as singleton (factory callback)`);
         this.potentialSingletons.set(key, factory);
     }
 
+    /**
+     * Register an initializer to be invoked each time a new instance of T is
+     * created by the container.
+     */
     public registerInitializer<T>(key: ContainerKey<T>, initializer: Initializer<T>): void {
+        this.validateKey(key);
+
+        if (typeof initializer !== 'function')
+            throw new Error(`Invalid argument '${nameof(initializer)}'. Initializer function expected.`);
+
+        const keyStr = this.getKeyString(key);
+        this.logger(`Registering an initializer for '${keyStr}'`);
+
         let initializersList = this.initializers.get(key);
         if (!initializersList) {
             initializersList = [];

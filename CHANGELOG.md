@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.1.0 - 2018-06-29](https://github.com/alonrbar/peppermint-di/tree/v1.1.0)
+
+### Added
+
+- Instance initializers.
+
 ## [1.0.5 - 2018-05-19](https://github.com/alonrbar/peppermint-di/tree/v1.0.5)
 
 ### Fixed

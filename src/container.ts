@@ -4,8 +4,6 @@ import { ResolveOptions } from './resolveOptions';
 import { Constructor, ContainerKey, Factory, Initializer, SimpleContainerKey } from './types';
 const defaultsDeep = require('lodash.defaultsdeep');
 
-// tslint:disable:ban-types
-
 function emptyLogger(msg: string) {
     // noop
 }
@@ -223,10 +221,12 @@ export class Container {
         options = defaultsDeep(options, new ResolveOptions());
 
         // from params
-        const fromParams = options.params[keyStr];
-        if (fromParams !== undefined) {
-            this.logger(`Resolving '${keyStr}' from params`);
-            return fromParams;
+        if (options.params) {
+            const fromParams = options.params.get(key);
+            if (fromParams !== undefined) {
+                this.logger(`Resolving '${keyStr}' from params`);
+                return fromParams;
+            }
         }
 
         // from factories
@@ -317,7 +317,6 @@ export class Container {
 
             // a workaround to allow calling a constructor through .apply
             // see: http://stackoverflow.com/questions/1606797/use-of-apply-with-new-operator-is-this-possible
-            // tslint:disable-next-line:variable-name
             const MiddlemanCTor = function (this: any) {
                 ctor.apply(this, dependencies);
             };

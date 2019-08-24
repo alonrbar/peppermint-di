@@ -82,10 +82,6 @@ export interface Constructor<T> {
     new(...args: any[]): T;
 }
 
-export interface IDictionary<T> {
-    [key: string]: T;
-}
-
 export declare type Factory<T> = () => T;
 
 export declare type Initializer<T> = (instance: T) => void;
@@ -119,7 +115,7 @@ export class ResolveOptions {
     /**
      * Parameters specified here will be used directly instead of being resolved.
      */
-    params?: IDictionary<any>;
+    params?: Map<any, any>;
 }
 
 //

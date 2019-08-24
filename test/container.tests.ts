@@ -1,7 +1,5 @@
 import { Container, i, injectable, ResolveError, ResolveOptions } from 'src';
 
-// tslint:disable:no-unused-expression object-literal-key-quotes
-
 describe(nameof(Container), () => {
 
     describe('constructor', () => {
@@ -83,7 +81,10 @@ describe(nameof(Container), () => {
                 const customDep = new Dependency();
                 customDep.name = 'custom name';
 
-                const myClass = container.get(MyClass, { params: { [nameof(Dependency)]: customDep } });
+                const params = new Map([
+                    [Dependency, customDep]
+                ]);
+                const myClass = container.get(MyClass, { params });
                 expect(myClass.dep).toBeInstanceOf(Dependency);
                 expect(myClass.dep.name).toEqual('custom name');
                 expect(myClass.dep).toBe(customDep);
@@ -109,9 +110,36 @@ describe(nameof(Container), () => {
                 const customDep = new Dependency();
                 customDep.name = 'custom name';
 
-                const myClass = container.get(MyClass, { params: { 'dep': customDep } });
+                const params = new Map([
+                    ['dep', customDep]
+                ]);
+                const myClass = container.get(MyClass, { params });
                 expect(myClass.dep).toBeInstanceOf(Dependency);
                 expect(myClass.dep.name).toEqual('custom name');
+            });
+
+            it('does not throw on empty params map', () => {
+
+                class Dependency {
+                    public name = 'default name';
+                }
+
+                @injectable
+                class MyClass {
+
+                    public dep: Dependency;
+
+                    constructor(dep: Dependency) {
+                        this.dep = dep;
+                    }
+                }
+
+                const container = new Container();
+
+                const params = new Map();
+                const myClass = container.get(MyClass, { params });
+                expect(myClass.dep).toBeInstanceOf(Dependency);
+                expect(myClass.dep.name).toEqual('default name');
             });
 
             it(`throws on missing parameters when ${nameof(ResolveOptions.prototype.optionalParameters)} is not specified`, () => {
@@ -272,7 +300,7 @@ describe(nameof(Container), () => {
             interface IDependency {
             }
 
-            const IDependency = Symbol('IDependency');  // tslint:disable-line:variable-name
+            const IDependency = Symbol('IDependency');
 
             //
             // the concrete type
@@ -443,7 +471,7 @@ describe(nameof(Container), () => {
             expect(callCount).toEqual(1);
         });
 
-    });    
+    });
 
     describe(nameof(Container.prototype.registerInitializer), () => {
 
@@ -498,7 +526,10 @@ describe(nameof(Container), () => {
             const customDep = new Dependency();
             customDep.name = 'custom name';
 
-            const myClass = container.get(MyClass, { params: { [nameof(Dependency)]: customDep } });
+            const params = new Map([
+                [Dependency, customDep]
+            ]);
+            const myClass = container.get(MyClass, { params });
 
             expect(initializedInstances).toEqual(0);
             expect(myClass.dep.name).toEqual('custom name');

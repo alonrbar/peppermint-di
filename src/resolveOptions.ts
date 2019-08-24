@@ -1,6 +1,3 @@
-import { IDictionary } from "./types";
-
-// tslint:disable:whitespace
 
 export class ResolveOptions {
 
@@ -9,7 +6,7 @@ export class ResolveOptions {
      * parameters and set their value to undefined.
      * 
      * Default value: false
-     */    
+     */
     public optionalParameters?= false;
 
     /**
@@ -23,5 +20,5 @@ export class ResolveOptions {
     /**
      * Parameters specified here will be used directly instead of being resolved.
      */
-    public params?: IDictionary<any> = {};
+    public params?: Map<any, any>;
 }

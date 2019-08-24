@@ -4,8 +4,8 @@ Dependency injection container for TypeScript and JavaScript.
 
 [![npm version](https://img.shields.io/npm/v/peppermint-di.svg)](https://www.npmjs.com/package/peppermint-di)
 [![npm license](https://img.shields.io/npm/l/peppermint-di.svg)](https://www.npmjs.com/package/peppermint-di)
+[![CircleCI](https://circleci.com/gh/alonrbar/easy-template-x.svg?style=shield)](https://circleci.com/gh/alonrbar/easy-template-x)
 [![dependencies](https://david-dm.org/alonrbar/peppermint-di.svg)](https://github.com/alonrbar/peppermint-di)
-[![dependencies](https://david-dm.org/alonrbar/peppermint-di/dev-status.svg)](https://github.com/alonrbar/peppermint-di)
 
 This project was originally based on [this blog post](http://www.yusufaytas.com/dependency-injection-in-javascript/) by Yusuf Aytas as it appeared in [this StackOverflow question](https://stackoverflow.com/questions/20058391/javascript-SomeService-injection).  
 It has since evolved to support:
@@ -175,7 +175,9 @@ const container = new Container();
 const customDep = new SomeService();
 customDep.name = 'custom name';
 
-const customParameters = { [SomeService.constructor.name]: customDep };
+const customParameters = new Map([
+    [SomeService, customDep]
+]);
 const myClass = container.get(MyClass, { params: customParameters });
 
 expect(myClass.myService).to.be.instanceOf(SomeService);
@@ -205,7 +207,9 @@ const container = new Container();
 const customDep = new SomeService();
 customDep.name = 'custom name';
 
-const customParameters = { 'myService': customDep };
+const customParameters = new Map([
+    ['myService', customDep]
+]);
 const myClass = container.get(MyClass, { params: customParameters });
 
 expect(myClass.myService).to.be.instanceOf(SomeService);

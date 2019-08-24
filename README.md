@@ -296,7 +296,7 @@ class ResolveOptions {
     /**
      * Parameters specified here will be used directly instead of being resolved.
      */
-    params?: IDictionary<any>;
+    params?: Map<any, any>;
 }
 ```
 

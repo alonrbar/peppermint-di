@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import { Container, i, injectable, ResolveError, ResolveOptions } from 'src';
 
 // tslint:disable:no-unused-expression object-literal-key-quotes
@@ -9,7 +8,7 @@ describe(nameof(Container), () => {
 
         it('does not throw when called with no arguments', () => {
             const container = new Container();
-            expect(container).to.exist;
+            expect(container).not.toBeFalsy();
         });
 
     });
@@ -36,7 +35,7 @@ describe(nameof(Container), () => {
             container.register(Dependency);
 
             const myClass = container.get(MyClass);
-            expect(myClass.dep).to.be.instanceOf(Dependency);
+            expect(myClass.dep).toBeInstanceOf(Dependency);
         });
 
         it('resolves constructor with no registered dependency', () => {
@@ -58,7 +57,7 @@ describe(nameof(Container), () => {
             const container = new Container();
 
             const myClass = container.get(MyClass);
-            expect(myClass.dep).to.be.instanceOf(Dependency);
+            expect(myClass.dep).toBeInstanceOf(Dependency);
         });
 
         describe(nameof(ResolveOptions), () => {
@@ -85,9 +84,9 @@ describe(nameof(Container), () => {
                 customDep.name = 'custom name';
 
                 const myClass = container.get(MyClass, { params: { [nameof(Dependency)]: customDep } });
-                expect(myClass.dep).to.be.instanceOf(Dependency);
-                expect(myClass.dep.name).to.eql('custom name');
-                expect(myClass.dep).to.be.equal(customDep);
+                expect(myClass.dep).toBeInstanceOf(Dependency);
+                expect(myClass.dep.name).toEqual('custom name');
+                expect(myClass.dep).toBe(customDep);
             });
 
             it('uses dependencies from params (javascript)', () => {
@@ -111,8 +110,8 @@ describe(nameof(Container), () => {
                 customDep.name = 'custom name';
 
                 const myClass = container.get(MyClass, { params: { 'dep': customDep } });
-                expect(myClass.dep).to.be.instanceOf(Dependency);
-                expect(myClass.dep.name).to.eql('custom name');
+                expect(myClass.dep).toBeInstanceOf(Dependency);
+                expect(myClass.dep.name).toEqual('custom name');
             });
 
             it(`throws on missing parameters when ${nameof(ResolveOptions.prototype.optionalParameters)} is not specified`, () => {
@@ -138,7 +137,7 @@ describe(nameof(Container), () => {
 
                 const container = new Container();
 
-                expect(() => container.get(MyClass)).to.throw(Error);
+                expect(() => container.get(MyClass)).toThrow();
             });
 
             it(`allows optional parameters when ${nameof(ResolveOptions.prototype.optionalParameters)} is true`, () => {
@@ -165,8 +164,8 @@ describe(nameof(Container), () => {
                 const container = new Container();
 
                 const myClass = container.get(MyClass, { optionalParameters: true });
-                expect(myClass.dep).to.be.instanceOf(Dependency);
-                expect(myClass.dep.name).to.eql('default name');
+                expect(myClass.dep).toBeInstanceOf(Dependency);
+                expect(myClass.dep.name).toEqual('default name');
             });
 
             it(`automatically resolves missing typed dependencies when ${nameof(ResolveOptions.prototype.constructUnregistered)} is not specified`, () => {
@@ -187,7 +186,7 @@ describe(nameof(Container), () => {
                 const container = new Container();
 
                 const myClass = container.get(MyClass);
-                expect(myClass.dep).to.be.instanceOf(Dependency);
+                expect(myClass.dep).toBeInstanceOf(Dependency);
             });
 
             it(`throws on missing typed dependencies when ${nameof(ResolveOptions.prototype.constructUnregistered)} is false`, () => {
@@ -207,7 +206,7 @@ describe(nameof(Container), () => {
 
                 const container = new Container();
 
-                expect(() => container.get(MyClass, { constructUnregistered: false })).to.throw(ResolveError);
+                expect(() => container.get(MyClass, { constructUnregistered: false })).toThrow(ResolveError);
             });
 
         });
@@ -234,7 +233,7 @@ describe(nameof(Container), () => {
             container.register('dep', Dependency);
 
             const myClass = container.get(MyClass);
-            expect(myClass.myDependency).to.be.instanceOf(Dependency);
+            expect(myClass.myDependency).toBeInstanceOf(Dependency);
         });
 
         it('registers a transient dependency by type', () => {
@@ -258,10 +257,10 @@ describe(nameof(Container), () => {
             const myClass1 = container.get(MyClass);
             const myClass2 = container.get(MyClass);
 
-            expect(myClass1).to.not.equal(myClass2);
-            expect(myClass1.dep).to.be.instanceOf(Dependency);
-            expect(myClass2.dep).to.be.instanceOf(Dependency);
-            expect(myClass1.dep).to.not.equal(myClass2.dep);
+            expect(myClass1).not.toBe(myClass2);
+            expect(myClass1.dep).toBeInstanceOf(Dependency);
+            expect(myClass2.dep).toBeInstanceOf(Dependency);
+            expect(myClass1.dep).not.toBe(myClass2.dep);
         });
 
         it('registers an interface implementation', () => {
@@ -304,8 +303,8 @@ describe(nameof(Container), () => {
             container.register(IDependency, ConcreteDependency);
 
             const myClass = container.get(MyClass);
-            expect(myClass).to.be.instanceOf(MyClass);
-            expect(myClass.dep).to.be.instanceOf(ConcreteDependency);
+            expect(myClass).toBeInstanceOf(MyClass);
+            expect(myClass.dep).toBeInstanceOf(ConcreteDependency);
         });
 
     });
@@ -339,11 +338,11 @@ describe(nameof(Container), () => {
             const myClass1 = container.get(MyClass);
             const myClass2 = container.get(MyClass);
 
-            expect(myClass1).to.not.equal(myClass2);
-            expect(myClass1.dep).to.not.equal(myClass2.dep);
-            expect(myClass1.dep).to.be.instanceOf(Dependency);
-            expect(myClass2.dep).to.be.instanceOf(Dependency);
-            expect(callCount).to.eql(2);
+            expect(myClass1).not.toBe(myClass2);
+            expect(myClass1.dep).not.toBe(myClass2.dep);
+            expect(myClass1.dep).toBeInstanceOf(Dependency);
+            expect(myClass2.dep).toBeInstanceOf(Dependency);
+            expect(callCount).toEqual(2);
         });
 
     });
@@ -375,9 +374,9 @@ describe(nameof(Container), () => {
             const myClass1 = container.get(MyClass);
             const myClass2 = container.get(MyClass);
 
-            expect(myClass1).to.not.equal(myClass2);
-            expect(myClass1.dep).to.equal(myClass2.dep);
-            expect(myClass1.dep).to.equal(myDep);
+            expect(myClass1).not.toBe(myClass2);
+            expect(myClass1.dep).toBe(myClass2.dep);
+            expect(myClass1.dep).toBe(myDep);
         });
 
         it('registers a singleton by type', () => {
@@ -402,9 +401,9 @@ describe(nameof(Container), () => {
             const myClass1 = container.get(MyClass);
             const myClass2 = container.get(MyClass);
 
-            expect(myClass1).to.not.equal(myClass2);
-            expect(myClass1.dep).to.equal(myClass2.dep);
-            expect(myClass1.dep).to.be.instanceOf(Dependency);
+            expect(myClass1).not.toBe(myClass2);
+            expect(myClass1.dep).toBe(myClass2.dep);
+            expect(myClass1.dep).toBeInstanceOf(Dependency);
         });
 
     });
@@ -438,10 +437,10 @@ describe(nameof(Container), () => {
             const myClass1 = container.get(MyClass);
             const myClass2 = container.get(MyClass);
 
-            expect(myClass1).to.not.equal(myClass2);
-            expect(myClass1.dep).to.equal(myClass2.dep);
-            expect(myClass1.dep).to.be.instanceOf(Dependency);
-            expect(callCount).to.eql(1);
+            expect(myClass1).not.toBe(myClass2);
+            expect(myClass1.dep).toBe(myClass2.dep);
+            expect(myClass1.dep).toBeInstanceOf(Dependency);
+            expect(callCount).toEqual(1);
         });
 
     });    
@@ -466,9 +465,9 @@ describe(nameof(Container), () => {
             const dep1 = container.get(Dependency);
             const dep2 = container.get(Dependency);
 
-            expect(initializedInstances).to.eql(2);
-            expect(dep1.name).to.eql('initialized_0');
-            expect(dep2.name).to.eql('initialized_1');
+            expect(initializedInstances).toEqual(2);
+            expect(dep1.name).toEqual('initialized_0');
+            expect(dep2.name).toEqual('initialized_1');
         });
 
         it('initializer is not invoked for params', () => {
@@ -501,8 +500,8 @@ describe(nameof(Container), () => {
 
             const myClass = container.get(MyClass, { params: { [nameof(Dependency)]: customDep } });
 
-            expect(initializedInstances).to.eql(0);
-            expect(myClass.dep.name).to.eql('custom name');
+            expect(initializedInstances).toEqual(0);
+            expect(myClass.dep.name).toEqual('custom name');
         });
 
         it('initializer is invoked only once for singletons', () => {
@@ -524,10 +523,10 @@ describe(nameof(Container), () => {
             const dep2 = container.get(Dependency);
             const dep3 = container.get(Dependency);
 
-            expect(initializedInstances).to.eql(1);
-            expect(dep1.name).to.eql('initialized_0');
-            expect(dep2.name).to.eql('initialized_0');
-            expect(dep3.name).to.eql('initialized_0');
+            expect(initializedInstances).toEqual(1);
+            expect(dep1.name).toEqual('initialized_0');
+            expect(dep2.name).toEqual('initialized_0');
+            expect(dep3.name).toEqual('initialized_0');
         });
 
         it('multiple initializers are always invoked in order', () => {
@@ -558,7 +557,7 @@ describe(nameof(Container), () => {
 
             for (let count = 0; count < 10; count++) {
                 const myDep = container.get(Dependency);
-                expect(myDep.num).to.eql(11);
+                expect(myDep.num).toEqual(11);
             }
         });
 

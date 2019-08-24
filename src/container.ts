@@ -137,7 +137,7 @@ export class Container {
         } else if (typeof value === 'function') {
             this.logger(`Registering '${keyStr}' as singleton (value as constructor)`);
             this.potentialSingletons.set(key, () => {
-                return this.resolveCTor(value, null);
+                return this.resolveCTor(value as Constructor<T>, null);
             });
 
         } else {

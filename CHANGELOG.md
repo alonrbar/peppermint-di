@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Added
+
+- Continuous integration with CircleCI.
+
+### Changed
+
 - Change dev stack to Babel, Jest and ESLint.
 
 ## [1.1.0 - 2018-06-29](https://github.com/alonrbar/peppermint-di/tree/v1.1.0)

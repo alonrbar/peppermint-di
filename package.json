@@ -32,7 +32,6 @@
     "release": "yarn quality && webpack --config webpack.dev.js && webpack --config webpack.release.js"
   },
   "dependencies": {
-    "lodash.defaultsdeep": "4.6.0",
     "reflect-metadata": "0.1.12"
   },
   "devDependencies": {

@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import { ResolveError, TypeInferenceError } from './errors';
 import { ResolveOptions } from './resolveOptions';
 import { Constructor, ContainerKey, Factory, Initializer, SimpleContainerKey } from './types';
-const defaultsDeep = require('lodash.defaultsdeep');
 
 function emptyLogger(msg: string) {
     // noop
@@ -218,7 +217,7 @@ export class Container {
      */
     private resolveSingleDependency<T>(key: ContainerKey<T>, options: ResolveOptions): T {
         const keyStr = this.getKeyString(key);
-        options = defaultsDeep(options, new ResolveOptions());
+        options = Object.assign(new ResolveOptions(), options || {});
 
         // from params
         if (options.params) {

@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## [2.0.0 - 2019-08-24](https://github.com/alonrbar/peppermint-di/tree/v2.0.0)
 
 ### Added
 

@@ -7,16 +7,6 @@ Dependency injection container for TypeScript and JavaScript.
 [![CircleCI](https://circleci.com/gh/alonrbar/easy-template-x.svg?style=shield)](https://circleci.com/gh/alonrbar/easy-template-x)
 [![dependencies](https://david-dm.org/alonrbar/peppermint-di.svg)](https://github.com/alonrbar/peppermint-di)
 
-This project was originally based on [this blog post](http://www.yusufaytas.com/dependency-injection-in-javascript/) by Yusuf Aytas as it appeared in [this StackOverflow question](https://stackoverflow.com/questions/20058391/javascript-SomeService-injection).  
-It has since evolved to support:
-
-- TypeScript
-- Singleton registration
-- Interface registration
-- Instance initializers
-- Optional parameters
-- and more...
-
 ## Installation
 
 ```shell
@@ -29,9 +19,9 @@ or
 npm install --save peppermint-di
 ```
 
-## Short Example - TypeScript
+## The gist
 
-```javascript
+```typescript
 import { Container, injectable } from 'peppermint-di';
 
 class SomeService {
@@ -53,39 +43,68 @@ container.registerSingle(SomeService)
 const myClass = container.get(SomeClass);
 ```
 
-## Short Example - JavaScript
+## Table of Content
 
-```javascript
-import { Container } from 'peppermint-di';
+- [Installation](#installation)
+- [The gist](#the-gist)
+- [Credits](#credits)
+- [Examples](#examples)
+  - [TypeScript](#typescript)
+    - [Custom parameters](#custom-parameters)
+    - [Interface registration](#interface-registration)
+    - [Instance initializers](#instance-initializers)
+  - [JavaScript](#javascript)
+    - [Simple example](#simple-example)
+    - [Custom parameters](#custom-parameters-1)
+- [API](#api)
+  - [The Container](#container)
+  - [ResolveOptions](#resolveoptions)
+- [Changelog](#changelog)
+
+## Credits
+
+This project was originally based on [this blog post](http://www.yusufaytas.com/dependency-injection-in-javascript/) by Yusuf Aytas as it appeared in [this StackOverflow question](https://stackoverflow.com/questions/20058391/javascript-SomeService-injection).  
+
+## Examples
+
+### TypeScript
+
+#### Custom parameters
+
+```typescript
+import { Container, injectable } from 'peppermint-di';
 
 class SomeService {
-    // ...
+    public name = 'default name';
 }
 
-class SomeClass {
-    constructor(someService) {
-        // ...
+@injectable
+class MyClass {
+
+    public myService: SomeService;
+
+    constructor(myService: SomeService) {
+        this.myService = myService;
     }
 }
 
-
 const container = new Container();
 
-container.registerSingle('someService', SomeService);
+const customDep = new SomeService();
+customDep.name = 'custom name';
 
-const myClass = container.get(SomeClass);
+const customParameters = new Map([
+    [SomeService, customDep]
+]);
+const myClass = container.get(MyClass, { params: customParameters });
+
+expect(myClass.myService).to.be.instanceOf(SomeService);
+expect(myClass.myService.name).to.eql('custom name');
 ```
 
-## More Examples
+#### Interface registration
 
-- [Interface registration](#interface-registration-typescript)
-- [Instance initializers](#instance-initializers-typescript)
-- [Custom parameters - TypeScript](#custom-parameters-typescript)
-- [Custom parameters - JavaScript](#custom-parameters-javascript)
-
-### Interface registration - TypeScript
-
-```javascript
+```typescript
 import { Container, i, injectable } from 'peppermint-di';
 
 //
@@ -131,9 +150,9 @@ expect(myClass).to.be.instanceOf(MyClass);
 expect(myClass.myService).to.be.instanceOf(ConcreteSomeService);
 ```
 
-### Instance initializers - TypeScript
+#### Instance initializers
 
-```javascript
+```typescript
 import { Container, injectable } from 'peppermint-di';
 
 class SomeService {
@@ -151,53 +170,44 @@ const myService = container.get(SomeService);
 expect(myService.someFeatureFlag).to.be.true;
 ```
 
-### Custom parameters - TypeScript
+### JavaScript
 
-```javascript
-import { Container, injectable } from 'peppermint-di';
-
-class SomeService {
-    public name = 'default name';
-}
-
-@injectable
-class MyClass {
-
-    public myService: SomeService;
-
-    constructor(myService: SomeService) {
-        this.myService = myService;
-    }
-}
-
-const container = new Container();
-
-const customDep = new SomeService();
-customDep.name = 'custom name';
-
-const customParameters = new Map([
-    [SomeService, customDep]
-]);
-const myClass = container.get(MyClass, { params: customParameters });
-
-expect(myClass.myService).to.be.instanceOf(SomeService);
-expect(myClass.myService.name).to.eql('custom name');
-```
-
-### Custom parameters - JavaScript
+#### Simple example
 
 ```javascript
 import { Container } from 'peppermint-di';
 
 class SomeService {
-    public name = 'default name';
+    // ...
+}
+
+class SomeClass {
+    constructor(someService) {
+        // ...
+    }
+}
+
+
+const container = new Container();
+
+container.registerSingle('someService', SomeService);
+
+const myClass = container.get(SomeClass);
+```
+
+#### Custom parameters
+
+```javascript
+import { Container } from 'peppermint-di';
+
+class SomeService {
+    constructor() {
+        this.name = 'default name';
+    }
 }
 
 class MyClass {
-
-    public myService: SomeService;
-
-    constructor(myService: SomeService) {
+    constructor(myService) {
         this.myService = myService;
     }
 }
@@ -226,7 +236,7 @@ You can also check out the library's [unit tests](https://github.com/alonrbar/pe
 
 Container key type:
 
-```javascript
+```typescript
 type ContainerKey<T> = Constructor<T> | SimpleContainerKey;
 
 type SimpleContainerKey = string | symbol;
@@ -234,7 +244,7 @@ type SimpleContainerKey = string | symbol;
 
 Register a transient service.
 
-```javascript
+```typescript
 Container.register<T>(key: Constructor<T>, type?: Constructor<T>): void;
 
 Container.register<T>(key: SimpleContainerKey, type: Constructor<T>): void;
@@ -244,7 +254,7 @@ Container.registerFactory<T>(key: ContainerKey<T>, factory: Factory<T>): void;
 
 Register a singleton service.
 
-```javascript
+```typescript
 Container.registerSingle<T>(key: Constructor<T>, valueOrType?: T | Constructor<T>): void;
 
 Container.registerSingle<T>(key: SimpleContainerKey, valueOrType: T | Constructor<T>): void;
@@ -254,7 +264,7 @@ Container.registerSingleFactory<T>(key: ContainerKey<T>, factory: Factory<T>): v
 
 Register an initializer.
 
-```javascript
+```typescript
 type Initializer<T> = (instance: T) => void;
 
 Container.registerInitializer<T>(key: ContainerKey<T>, initializer: Initializer<T>): void
@@ -262,19 +272,19 @@ Container.registerInitializer<T>(key: ContainerKey<T>, initializer: Initializer<
 
 Get an instance of T.
 
-```javascript
+```typescript
 Container.get<T>(key: ContainerKey<T>, options?: ResolveOptions): T;
 ```
 
 Resolve function arguments and call it.
 
-```javascript
+```typescript
 Container.call(foo: Function, thisArg?: any, options?: ResolveOptions): any;
 ```
 
 ### ResolveOptions
 
-```javascript
+```typescript
 class ResolveOptions {
 
     /**

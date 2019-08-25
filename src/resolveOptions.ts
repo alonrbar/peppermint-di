@@ -1,3 +1,4 @@
+import { ContainerKey } from './types';
 
 export class ResolveOptions {
 
@@ -20,5 +21,5 @@ export class ResolveOptions {
     /**
      * Parameters specified here will be used directly instead of being resolved.
      */
-    public params?: Map<any, any>;
+    public params?: Map<ContainerKey<any>, any>;
 }

@@ -115,7 +115,7 @@ export class ResolveOptions {
     /**
      * Parameters specified here will be used directly instead of being resolved.
      */
-    params?: Map<any, any>;
+    params?: Map<ContainerKey<any>, any>;
 }
 
 //

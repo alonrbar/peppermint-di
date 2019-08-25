@@ -1,5 +1,11 @@
 # Change Log
 
+## [2.0.1 - 2019-08-25](https://github.com/alonrbar/peppermint-di/tree/v2.0.1)
+
+### Fixed
+
+- Tune `ResolveOptions.params` typings.
+
 ## [2.0.0 - 2019-08-24](https://github.com/alonrbar/peppermint-di/tree/v2.0.0)
 
 ### Added

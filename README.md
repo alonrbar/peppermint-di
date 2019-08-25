@@ -64,6 +64,7 @@ const myClass = container.get(SomeClass);
 ## Credits
 
 This project was originally based on [this blog post](http://www.yusufaytas.com/dependency-injection-in-javascript/) by Yusuf Aytas as it appeared in [this StackOverflow question](https://stackoverflow.com/questions/20058391/javascript-SomeService-injection).  
+The API is somewhat inspired by the excellent [Simple Injector](https://simpleinjector.readthedocs.io/en/latest/quickstart.html#introducing-simple-injector) C# library.
 
 ## Examples
 

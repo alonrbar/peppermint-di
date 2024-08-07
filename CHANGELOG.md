@@ -1,5 +1,11 @@
 # Change Log
 
+## [2.0.2 - 2024-08-07](https://github.com/alonrbar/peppermint-di/tree/v2.0.2)
+
+## Changed
+
+- Minor readme updates.
+
 ## [2.0.1 - 2019-08-25](https://github.com/alonrbar/peppermint-di/tree/v2.0.1)
 
 ### Fixed

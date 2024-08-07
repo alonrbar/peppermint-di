@@ -2,10 +2,9 @@
 
 Dependency injection container for TypeScript and JavaScript.
 
+[![ci](https://github.com/alonrbar/peppermint-di/actions/workflows/ci.yaml/badge.svg)](https://github.com/alonrbar/peppermint-di/actions/workflows/ci.yaml)
 [![npm version](https://img.shields.io/npm/v/peppermint-di.svg)](https://www.npmjs.com/package/peppermint-di)
-[![npm license](https://img.shields.io/npm/l/peppermint-di.svg)](https://www.npmjs.com/package/peppermint-di)
-[![CircleCI](https://circleci.com/gh/alonrbar/easy-template-x.svg?style=shield)](https://circleci.com/gh/alonrbar/easy-template-x)
-[![dependencies](https://david-dm.org/alonrbar/peppermint-di.svg)](https://github.com/alonrbar/peppermint-di)
+[![license](https://img.shields.io/npm/l/peppermint-di.svg)](https://github.com/alonrbar/peppermint-di/blob/master/LICENSE)
 
 ## Installation
 
